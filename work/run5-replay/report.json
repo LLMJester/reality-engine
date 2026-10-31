@@ -1,0 +1,95 @@
+{
+ "plan": "run5-replay",
+ "pack": "describing-reality",
+ "final_design": "take apart D01",
+ "final_id": "gd6f99b53eb9",
+ "sealed_set": "sealed2",
+ "n_sealed": 720,
+ "clusters": 180,
+ "right": {
+  "mean": 0.6538,
+  "range": [
+   0.6339,
+   0.6729
+  ],
+  "by_level": {
+   "k=1": 0.7741,
+   "k=2": 0.688,
+   "k=4": 0.6204,
+   "k=8": 0.5329
+  }
+ },
+ "reliability": {
+  "finished_cleanly": 1.0,
+  "n": 720,
+  "weakest_level": "k=8",
+  "pack": null
+ },
+ "why_it_fails": {
+  "wrong answers": 516,
+  "notes failed their check": 73,
+  "questions left unanswered": 7
+ },
+ "verdict": [
+  {
+   "test": "1_vs_control",
+   "rival": "A0P",
+   "lead": 0.163,
+   "range": [
+    0.14,
+    0.1861
+   ],
+   "counted": true
+  },
+  {
+   "test": "2_vs_top_hand",
+   "rival": "ONT_LOOSE",
+   "lead": 0.1643,
+   "range": [
+    0.1373,
+    0.1913
+   ],
+   "counted": true
+  },
+  {
+   "test": "3_vs_runner_up",
+   "rival": "A3",
+   "lead": 0.023,
+   "range": [
+    -0.002,
+    0.0481
+   ],
+   "counted": false
+  }
+ ],
+ "effort": {
+  "founders": 16,
+  "new_versions": 25,
+  "designs_built": 68,
+  "runs": 42560,
+  "stages": 4,
+  "changes_kept": 0
+ },
+ "headroom": {
+  "closest_rival": {
+   "test": "3_vs_runner_up",
+   "rival": "A3",
+   "lead": 0.023,
+   "range": [
+    -0.002,
+    0.0481
+   ],
+   "counted": false
+  },
+  "best_unproven": {
+   "where": "round 1 screen",
+   "slot": "rules",
+   "effect": 0.0203,
+   "range": [
+    -0.0088,
+    0.0494
+   ],
+   "verdict": "advanced to the confirmation"
+  }
+ }
+}

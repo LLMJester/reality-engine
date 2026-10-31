@@ -1,0 +1,19 @@
+{
+ "name": "run5-replay",
+ "about": "Run 5 of Describing Reality for AI, rerun through the engine from its saved records (no model calls). The rules are run 5's locked rules (rpp-v3 PREREG.md, V3-044 and V3-058); the replay test checks that the engine reaches run 5's numbers and decisions.",
+ "pack": "packs.describing_reality.pack:ReplayPack",
+ "control": "A0P",
+ "baselines": ["BLIND"],
+ "sets": {"compare": "main", "compare_also": ["hand"], "takeapart": "main",
+          "rounds": [{"screen": "s3_screen", "confirm": "s3_confirm"},
+                     {"screen": "s4_screen", "confirm": "s4_confirm"},
+                     {"screen": "s5_screen", "confirm": "s5_confirm"}],
+          "sealed": "sealed2"},
+ "takeapart": {"family": ["layout", "rules", "answering", "example", "budget",
+                          "layout:rules", "layout:answering", "rules:answering", "layout:rules:answering"]},
+ "buildout": {"per_slot": 4, "screen_gate": 0.015, "max_advance": 4, "converge": 0.005},
+ "final": {"rivals": ["control", "top:hand", "runner_up"], "also_on": ["hand"]},
+ "run": {"workers": 16, "retries": 0, "backoff": [0]},
+ "stats": {"boot": 10000, "seed": 20261028, "alpha": 0.05},
+ "approval": "auto"
+}

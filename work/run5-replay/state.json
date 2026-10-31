@@ -1,0 +1,433 @@
+{
+ "step": "done",
+ "events": [
+  {
+   "t": "2026-10-31T17:47:18",
+   "msg": "compare: 16 founders x 980 items"
+  },
+  {
+   "t": "2026-10-31T17:48:30",
+   "msg": "compare done: winner FACTS, runner-up A3 (tied at the top); top on hand: ONT_LOOSE"
+  },
+  {
+   "t": "2026-10-31T17:48:30",
+   "msg": "takeapart: 5 new versions written and frozen (hash b8fd171cb00a6dc0)"
+  },
+  {
+   "t": "2026-10-31T17:48:30",
+   "msg": "take apart: versions approved; the factorial starts"
+  },
+  {
+   "t": "2026-10-31T17:48:30",
+   "msg": "take apart: 32 designs x 480 items"
+  },
+  {
+   "t": "2026-10-31T17:49:40",
+   "msg": "take apart done: D01 (keeps the winner; kept parts none)"
+  },
+  {
+   "t": "2026-10-31T17:49:40",
+   "msg": "round1: 20 new versions written and frozen (hash 9d494d332f896be1)"
+  },
+  {
+   "t": "2026-10-31T17:49:40",
+   "msg": "round 1: versions approved; the screen starts"
+  },
+  {
+   "t": "2026-10-31T17:49:40",
+   "msg": "round 1 screen: 21 designs x 320 items"
+  },
+  {
+   "t": "2026-10-31T17:50:10",
+   "msg": "round 1 screen done: advancing layout layout.1, rules rules.4"
+  },
+  {
+   "t": "2026-10-31T17:50:10",
+   "msg": "round 1: the confirmation starts"
+  },
+  {
+   "t": "2026-10-31T17:50:10",
+   "msg": "round 1 confirmation: 4 designs x 480 items"
+  },
+  {
+   "t": "2026-10-31T17:50:19",
+   "msg": "round 1 confirmation done: D01; the rounds stop (no mix beat the current best)"
+  },
+  {
+   "t": "2026-10-31T17:50:19",
+   "msg": "sealed set 'sealed2' opened (720 items); it is never closed again"
+  },
+  {
+   "t": "2026-10-31T17:50:19",
+   "msg": "final check: 4 designs x 720 sealed items"
+  },
+  {
+   "t": "2026-10-31T17:50:33",
+   "msg": "final check done: 1_vs_control (A0P) lead 0.163 [0.14, 0.1861] counted; 2_vs_top_hand (ONT_LOOSE) lead 0.1643 [0.1373, 0.1913] counted; 3_vs_runner_up (A3) lead 0.023 [-0.002, 0.0481] not counted"
+  },
+  {
+   "t": "2026-10-31T17:50:37",
+   "msg": "trust report written (C:\\Users\\jsund\\OneDrive\\RPP Version 2\\reality-engine\\work\\run5-replay\\report.html); the run is complete"
+  }
+ ],
+ "history": [
+  {
+   "where": "take apart",
+   "slot": "layout",
+   "effect": -0.0166,
+   "range": [
+    -0.0244,
+    -0.0089
+   ],
+   "value": {
+    "core_params": {
+     "headers": [
+      "SYSTEMS & PARTS",
+      "QUANTITIES",
+      "CAUSES & RULES",
+      "TIMING",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    }
+   },
+   "verdict": "not kept"
+  },
+  {
+   "where": "take apart",
+   "slot": "rules",
+   "effect": -0.0349,
+   "range": [
+    -0.0425,
+    -0.0274
+   ],
+   "value": {
+    "guidance_text": "One fact per bullet, under 150 characters, no prose. Forms: 'name: value unit (condition)' e.g. 'Mill.P1.flow: 20 L/min when running'; 'a -> b: relation' e.g. 'Mill.P1 -> Mill.T1: fills'; 'if condition then effect' for rules. Never join two facts with ';', ',' lists or 'and': split them into separate bullets. When the text covers several systems, start every name with its system name. Copy numbers, units, limits and times exactly. If the text says something is unknown or not given, write 'name: unknown'. Write all notes in one save. If the checker reports a problem, split or shorten that bullet."
+   },
+   "verdict": "not kept"
+  },
+  {
+   "where": "take apart",
+   "slot": "answering",
+   "effect": -0.0432,
+   "range": [
+    -0.051,
+    -0.0355
+   ],
+   "value": {
+    "answering_text": "1. Name the system and parts the question asks about. Find every bullet that mentions them, including the system-prefixed names.\n2. Gather the values with units, rules and relations that apply. For cause or effect questions, follow the relation chain one link at a time.\n3. For a calculation, write the formula, insert the noted numbers and check the units.\n4. For timing, put the noted events in time order before answering.\n5. Never use a value from another system whose part has a similar name.\n6. If the notes mark the fact unknown or do not contain it, answer that it is unknown. Do not guess.\n7. Give a short direct answer, with the number and unit where there is one."
+   },
+   "verdict": "not kept"
+  },
+  {
+   "where": "take apart",
+   "slot": "example",
+   "effect": -0.0025,
+   "range": [
+    -0.0097,
+    0.0048
+   ],
+   "value": {
+    "examples": [
+     "THINGS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\nVALUES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Farm.V1.flow: unknown\n- Lab.F1.setpoint: -20 C\nRULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nLINKS\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger"
+    ],
+    "examples_new_layout": [
+     "SYSTEMS & PARTS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nQUANTITIES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Lab.F1.setpoint: -20 C\nCAUSES & RULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger\nUNKNOWNS\n- Farm.V1.flow: unknown"
+    ]
+   },
+   "verdict": "not kept"
+  },
+  {
+   "where": "take apart",
+   "slot": "budget",
+   "effect": 0.0033,
+   "range": [
+    -0.0043,
+    0.011
+   ],
+   "value": {
+    "max_turns": 24
+   },
+   "verdict": "not kept"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "layout",
+   "effect": 0.0177,
+   "range": [
+    -0.0123,
+    0.0477
+   ],
+   "value": {
+    "headers": [
+     "THINGS",
+     "VALUES",
+     "RULES & LINKS",
+     "TIMING"
+    ],
+    "tags": false,
+    "granularity": "coarse"
+   },
+   "verdict": "advanced to the confirmation"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "layout",
+   "effect": -0.0174,
+   "range": [
+    -0.0444,
+    0.0095
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "layout",
+   "effect": -0.0251,
+   "range": [
+    -0.0547,
+    0.0045
+   ],
+   "value": {
+    "headers": [
+     "THINGS",
+     "VALUES",
+     "RULES",
+     "LINKS",
+     "TIMING",
+     "UNKNOWNS",
+     "COVERAGE CHECK"
+    ],
+    "tags": false,
+    "granularity": "fine"
+   },
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "layout",
+   "effect": 0.0077,
+   "range": [
+    -0.0203,
+    0.0356
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "rules",
+   "effect": -0.0133,
+   "range": [
+    -0.0411,
+    0.0145
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "rules",
+   "effect": -0.0875,
+   "range": [
+    -0.123,
+    -0.052
+   ],
+   "value": "Give every part a fixed ID and use only that ID afterwards. If the description covers more than one separate plant, network or service, give each one a short letter tag (A, B, C ...). Start every ID with that tag, for example 'A.P1' and 'B.P1', even when the text uses the same part name in both. Declare each part once with one bullet: 'A.P1: pump'. Write each quantity as 'ID.attribute: number unit (condition)', for example 'A.P1.flow: 50 L/min when on'. Write each connection or cause as a directed edge between IDs: 'A.P1 -> A.T1: fills'. For each part that takes something in or puts something out, write one bullet per direction: 'A.P1 in: power from A.G1' and 'A.P1 out: water to A.T1'. Write each condition as 'if ID.attribute op number then effect'. Write each time fact as 'ID: event at/after time'. Write each missing fact as 'ID.attribute: unknown'. Exactly one fact per bullet and under 200 characters. Never list several parts or numbers in one bullet; write one bullet each.",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "rules",
+   "effect": -0.0165,
+   "range": [
+    -0.0464,
+    0.0133
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "rules",
+   "effect": 0.0203,
+   "range": [
+    -0.0088,
+    0.0494
+   ],
+   "value": "Write every fact as one short bullet in key-value form: 'name: value' (for example 'T1.level: 40% at start') or 'a -> b: relation' (for example 'P1 -> T1: fills'). One fact per bullet, no prose, no repetition. When one sentence of the text holds several facts (a list of parts, two numbers, a cause and a time), write a separate bullet for each one. Never join facts with ';', 'and' or commas. Put each fact under the section it belongs to.",
+   "verdict": "advanced to the confirmation"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "strategy",
+   "effect": -0.0152,
+   "range": [
+    -0.047,
+    0.0165
+   ],
+   "value": "Before saving, reread each line once. If a line states more than one fact, or covers two parts, two numbers or two conditions, split it into separate lines. If a line runs long, shorten or split it. Then save everything in one call. The checker shows only the first problem. When it reports one, fix that line and every other line with the same fault in the same save, then stop once it passes.",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "strategy",
+   "effect": -0.0206,
+   "range": [
+    -0.0494,
+    0.0083
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "strategy",
+   "effect": -0.0254,
+   "range": [
+    -0.0568,
+    0.006
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "strategy",
+   "effect": -0.0281,
+   "range": [
+    -0.0599,
+    0.0036
+   ],
+   "value": "When the description covers four or more separate systems, check balance before saving. Count your facts for each system and compare that with how much the description says about it. A system whose facts are much fewer than its share of the text, or that lacks any quantity, condition or time it was given, is incomplete. Reread that system's passages and add what is missing as separate single-fact lines. Do not merge lines to save space.",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "answering",
+   "effect": -0.1737,
+   "range": [
+    -0.2065,
+    -0.1409
+   ],
+   "value": "Answer from the notes only. Find the bullets that name what the question asks about, and read them before answering. Copy numbers and units exactly as noted. If the notes say a fact is unknown, or do not contain it, say it is unknown rather than guessing. Give a short, direct answer.",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "answering",
+   "effect": -0.0147,
+   "range": [
+    -0.0474,
+    0.018
+   ],
+   "value": "Work in three short steps before the final answer.\n1. Entity list: write the ids of every part the question mentions, using the full noted name with its prefix (for example Farm.T1). Add each part directly connected to them by an 'a -> b' bullet. Stop expanding after two hops unless the question asks for a longer chain.\n2. Edge table: one row per relevant 'a -> b' bullet, in the form 'source | target | relation'. For a cause or effect question, read the rows from source to target to get the chain.\n3. Input-output table: one row per entity in the form 'id | inputs (number unit) | outputs (number unit) | conditions that change them | time or delay'. Fill each cell only from bullets. Write '?' where no bullet gives it.\nThen compute or reason over the table rows only. Do not use a row whose id prefix differs from the entities in step 1. If a cell the answer needs is '?', answer that it is unknown or not given. End with one line: 'Answer: ...', with the number and unit where there is one.",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "answering",
+   "effect": -0.0862,
+   "range": [
+    -0.1187,
+    -0.0537
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "answering",
+   "effect": -0.0496,
+   "range": [
+    -0.078,
+    -0.0212
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "example",
+   "effect": -0.0017,
+   "range": [
+    -0.0297,
+    0.0263
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "example",
+   "effect": -0.0159,
+   "range": [
+    -0.0434,
+    0.0117
+   ],
+   "value": null,
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "example",
+   "effect": -0.023,
+   "range": [
+    -0.0533,
+    0.0072
+   ],
+   "value": "## THINGS\n- Kiln.K1: electric kiln\n- Kiln.H1: heating element in K1\n- Kiln.D1: door switch\n- Kiln.C1: controller\n## VALUES\n- Kiln.K1.temp_max: 1300 C\n- Kiln.H1.power: 9 kW\n- Kiln.D1.state: closed at start\n- Kiln.C1.ramp: 100 C/h\n- Kiln.K1.volume: unknown (not given)\n## RULES\n- if Kiln.D1 opens then Kiln.H1 turns off\n- if Kiln.K1.temp > 1300 C then Kiln.C1 cuts Kiln.H1\n## LINKS\n- Kiln.C1 -> Kiln.H1: switches\n- Kiln.H1 -> Kiln.K1: heats\n- Kiln.D1 -> Kiln.C1: signals\n## TIMING\n- Kiln.C1.ramp_start: 08:00\n- Kiln.K1.cooling: unknown duration (not given)\n- Kiln.H1.off_delay: under 1 s after door opens",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 screen",
+   "slot": "example",
+   "effect": 0.0079,
+   "range": [
+    -0.0229,
+    0.0388
+   ],
+   "value": "## THINGS\n- Dairy.C1: milk cooler\n- Lift.M1: lift motor\n- Pool.P1: filter pump\n- Pool.F1: sand filter\n- Rack.U1: backup battery\n- Rack.S1: server\n## VALUES\n- Dairy.C1.setpoint: 4 C\n- Lift.M1.load_max: 630 kg\n- Pool.P1.flow: 12 m3/h\n- Rack.U1.runtime: 20 min\n- Rack.U1.age: unknown\n## RULES\n- if Lift.M1.load > 630 kg then Lift.M1 stays stopped\n- if Dairy.C1.temp > 7 C then Dairy alarm sounds\n## LINKS\n- Pool.P1 -> Pool.F1: pushes water through\n- Rack.U1 -> Rack.S1: powers\n## TIMING\n- Pool.P1: runs 8 h per day\n- Dairy alarm: delay 10 min after trigger\n- Rack.U1: takes over within 1 s after mains loss",
+   "verdict": "screened out"
+  },
+  {
+   "where": "round 1 confirmation",
+   "slot": "layout+rules",
+   "effect": null,
+   "range": null,
+   "verdict": "no mix beat the current best; it stays"
+  }
+ ],
+ "progress": {
+  "stage": "final",
+  "planned": 500,
+  "done": 500,
+  "t0": 1793490632.7710776
+ },
+ "winner": "FACTS",
+ "winner_id": "gd6f99b53eb9",
+ "runner_up": "A3",
+ "top": {
+  "hand": "ONT_LOOSE"
+ },
+ "best": {
+  "label": "take apart D01",
+  "id": "gd6f99b53eb9",
+  "folder": "round1_confirm",
+  "items": "s3_confirm",
+  "from": "takeapart"
+ },
+ "round": 1,
+ "round1_advancing": {
+  "layout": "layout.1",
+  "rules": "rules.4"
+ },
+ "opened": {
+  "sealed": {
+   "t": "2026-10-31T17:50:19",
+   "set": "sealed2"
+  }
+ }
+}

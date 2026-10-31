@@ -1,0 +1,13 @@
+{
+ "name": "toy",
+ "pack": "packs.toy.pack:ToyPack",
+ "control": "PLAIN",
+ "sets": {"compare": "compare", "takeapart": "takeapart",
+          "rounds": [{"screen": "r1_screen", "confirm": "r1_confirm"}, {"screen": "r2_screen", "confirm": "r2_confirm"}],
+          "sealed": "sealed"},
+ "buildout": {"per_slot": 3},
+ "final": {"rivals": ["control", "runner_up"]},
+ "run": {"workers": 4, "retries": 0, "backoff": [0]},
+ "stats": {"boot": 2000},
+ "approval": "auto"
+}

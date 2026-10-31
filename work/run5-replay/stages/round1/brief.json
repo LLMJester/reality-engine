@@ -1,0 +1,117 @@
+{
+ "evidence": {
+  "n_items": 480,
+  "mean": 0.6599,
+  "by_level": {
+   "k=1": {
+    "mean": 0.7528,
+    "n": 120
+   },
+   "k=2": {
+    "mean": 0.7153,
+    "n": 120
+   },
+   "k=4": {
+    "mean": 0.6479,
+    "n": 120
+   },
+   "k=8": {
+    "mean": 0.5236,
+    "n": 120
+   }
+  },
+  "failure_types": {
+   "wrong answers": 336,
+   "questions left unanswered": 10,
+   "notes failed their check": 53
+  },
+  "pack": {
+   "Notes that passed their checker": "89%",
+   "Mean output tokens per case": 5022
+  },
+  "history": [
+   {
+    "where": "take apart",
+    "slot": "layout",
+    "effect": -0.0166,
+    "range": [
+     -0.0244,
+     -0.0089
+    ],
+    "value": {
+     "core_params": {
+      "headers": [
+       "SYSTEMS & PARTS",
+       "QUANTITIES",
+       "CAUSES & RULES",
+       "TIMING",
+       "UNKNOWNS"
+      ],
+      "tags": false,
+      "granularity": "fine"
+     }
+    },
+    "verdict": "not kept"
+   },
+   {
+    "where": "take apart",
+    "slot": "rules",
+    "effect": -0.0349,
+    "range": [
+     -0.0425,
+     -0.0274
+    ],
+    "value": {
+     "guidance_text": "One fact per bullet, under 150 characters, no prose. Forms: 'name: value unit (condition)' e.g. 'Mill.P1.flow: 20 L/min when running'; 'a -> b: relation' e.g. 'Mill.P1 -> Mill.T1: fills'; 'if condition then effect' for rules. Never join two facts with ';', ',' lists or 'and': split them into separate bullets. When the text covers several systems, start every name with its system name. Copy numbers, units, limits and times exactly. If the text says something is unknown or not given, write 'name: unknown'. Write all notes in one save. If the checker reports a problem, split or shorten that bullet."
+    },
+    "verdict": "not kept"
+   },
+   {
+    "where": "take apart",
+    "slot": "answering",
+    "effect": -0.0432,
+    "range": [
+     -0.051,
+     -0.0355
+    ],
+    "value": {
+     "answering_text": "1. Name the system and parts the question asks about. Find every bullet that mentions them, including the system-prefixed names.\n2. Gather the values with units, rules and relations that apply. For cause or effect questions, follow the relation chain one link at a time.\n3. For a calculation, write the formula, insert the noted numbers and check the units.\n4. For timing, put the noted events in time order before answering.\n5. Never use a value from another system whose part has a similar name.\n6. If the notes mark the fact unknown or do not contain it, answer that it is unknown. Do not guess.\n7. Give a short direct answer, with the number and unit where there is one."
+    },
+    "verdict": "not kept"
+   },
+   {
+    "where": "take apart",
+    "slot": "example",
+    "effect": -0.0025,
+    "range": [
+     -0.0097,
+     0.0048
+    ],
+    "value": {
+     "examples": [
+      "THINGS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\nVALUES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Farm.V1.flow: unknown\n- Lab.F1.setpoint: -20 C\nRULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nLINKS\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger"
+     ],
+     "examples_new_layout": [
+      "SYSTEMS & PARTS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nQUANTITIES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Lab.F1.setpoint: -20 C\nCAUSES & RULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger\nUNKNOWNS\n- Farm.V1.flow: unknown"
+     ]
+    },
+    "verdict": "not kept"
+   },
+   {
+    "where": "take apart",
+    "slot": "budget",
+    "effect": 0.0033,
+    "range": [
+     -0.0043,
+     0.011
+    ],
+    "value": {
+     "max_turns": 24
+    },
+    "verdict": "not kept"
+   }
+  ]
+ },
+ "text": "WHAT EARLIER STAGES MEASURED (scores only; no test case is shown)\nCurrent best: mean score 0.6599 on 480 test cases.\nBy difficulty level: k=1: 0.7528 (n=120), k=2: 0.7153 (n=120), k=4: 0.6479 (n=120), k=8: 0.5236 (n=120)\nHow runs lost points: wrong answers 336, notes failed their check 53, questions left unanswered 10\nNotes that passed their checker: 89%\nMean output tokens per case: 5022\n\nVersions tried before (effect = change in mean score against the design it changed; a range that includes 0 means no clear effect):\n- take apart, part layout: effect -0.0166 (range -0.0244 to -0.0089); not kept\n  version: {'core_params': {'headers': ['SYSTEMS & PARTS', 'QUANTITIES', 'CAUSES & RULES', 'TIMING', 'UNKNOWNS'], 'tags': False, 'granularity': 'fine'}}\n- take apart, part rules: effect -0.0349 (range -0.0425 to -0.0274); not kept\n  version: {'guidance_text': \"One fact per bullet, under 150 characters, no prose. Forms: 'name: value unit (condition)' e.g. 'Mill.P1.flow: 20 L/min when running'; 'a -> b: relation' e.g. 'Mill.P1 -> Mill.T1: fills'; 'if condition then effect' for rules. Never join two facts with ';', ',' lists or 'and': split them into separate bullets. When the text covers several systems, start every name with its system name. Copy numbers, units, limits and times exactly. If the text says something is unknown or not given, write 'name: unknown'. Write all notes in one save. If the checker reports a problem, split or shorten that bullet.\"}\n- take apart, part answering: effect -0.0432 (range -0.051 to -0.0355); not kept\n  version: {'answering_text': '1. Name the system and parts the question asks about. Find every bullet that mentions them, including the system-prefixed names.\\n2. Gather the values with units, rules and relations that apply. For cause or effect questions, follow the relation chain one link at a time.\\n3. For a calculation, write the formula, insert the noted numbers and check the units.\\n4. For timing, put the noted events in time order before answering.\\n5. Never use a value from another system whose part has a similar name.\\n6. If the notes mark the fact unknown or do not contain it, answer that it is unknown. Do not guess.\\n7. Give a short direct answer, with the number and unit where there is one.'}\n- take apart, part example: effect -0.0025 (range -0.0097 to 0.0048); not kept\n  version: {'examples': ['THINGS\\n- Farm.T1: water tank, 1000 L capacity\\n- Farm.P1: pump\\n- Farm.V1: drain valve on T1\\n- Lab.F1: freezer\\nVALUES\\n- Farm.T1.level: 40% at start\\n- Farm.P1.flow: 50 L/min when on\\n- Farm.V1.flow: unknown\\n- Lab.F1.setpoint: -20 C\\nRULES\\n- if Farm.T1.level > 90% then Farm.P1 stops\\n- if Lab.F1.temp > -15 C then Lab alarm sounds\\nLINKS\\n- Farm.P1 -> Farm.T1: fills\\n- Farm.T1 -> Farm.V1: drains through\\nTIMING\\n- Farm.P1: starts 06:00 daily\\n- Lab alarm: delay 5 min after trigger'], 'examples_new_layout': ['SYSTEMS & PARTS\\n- Farm.T1: water tank, 1000 L capacity\\n- Farm.P1: pump\\n- Farm.V1: drain valve on T1\\n- Lab.F1: freezer\\n- Farm.P1 -> Farm.T1: fills\\n- Farm.T1 -> Farm.V1: drains through\\nQUANTITIES\\n- Farm.T1.level: 40% at start\\n- Farm.P1.flow: 50 L/min when on\\n- Lab.F1.setpoint: -20 C\\nCAUSES & RULES\\n- if Farm.T1.level > 90% then Farm.P1 stops\\n- if Lab.F1.temp > -15 C then Lab alarm sounds\\nTIMING\\n- Farm.P1: starts 06:00 daily\\n- Lab alarm: delay 5 min after trigger\\nUNKNOWNS\\n- Farm.V1.flow: unknown']}\n- take apart, part budget: effect 0.0033 (range -0.0043 to 0.011); not kept\n  version: {'max_turns': 24}",
+ "round": 1
+}

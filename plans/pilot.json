@@ -1,0 +1,18 @@
+{
+ "name": "pilot1",
+ "about": "Live mini-pilot of the engine on the describing-reality pack (2026-10-31): every step for real (GPT-6 Luna through Codex for the episodes, Claude Opus as the designer), at a small size to show the engine works end to end. Too small to be a result: 8 systems in the exam, 4 in each round set and 4 sealed. Item bases are fresh (plans/pilot_items.json). Approval is automatic so the pilot runs unattended; the designer's versions are frozen and kept in work/pilot1/stages.",
+ "pack": "packs.describing_reality.pack:LivePack",
+ "pack_options": {"founders": ["A0P", "FACTS", "SEC_A1", "SEC_FLOW"], "item_sets_file": "plans/pilot_items.json",
+                  "retire": false},
+ "control": "A0P",
+ "sets": {"compare": "compare", "takeapart": "compare",
+          "rounds": [{"screen": "r1_screen", "confirm": "r1_confirm"}],
+          "sealed": "sealed"},
+ "takeapart": {"slots": ["layout", "rules", "answering"]},
+ "buildout": {"slots": ["layout", "rules", "answering"], "per_slot": 4, "screen_gate": 0.015, "max_advance": 3,
+              "converge": 0.005},
+ "final": {"rivals": ["control", "runner_up"]},
+ "run": {"workers": 16, "retries": 2, "backoff": [60, 300]},
+ "stats": {"boot": 10000, "seed": 20261031, "alpha": 0.05},
+ "approval": "auto"
+}

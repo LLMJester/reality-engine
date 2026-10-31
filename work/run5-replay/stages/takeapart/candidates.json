@@ -1,0 +1,109 @@
+{
+ "step": "takeapart",
+ "alts": {
+  "layout": [
+   {
+    "value": {
+     "core_params": {
+      "headers": [
+       "SYSTEMS & PARTS",
+       "QUANTITIES",
+       "CAUSES & RULES",
+       "TIMING",
+       "UNKNOWNS"
+      ],
+      "tags": false,
+      "granularity": "fine"
+     }
+    },
+    "factor": "A",
+    "rationale": "run 5's + text"
+   }
+  ],
+  "rules": [
+   {
+    "value": {
+     "guidance_text": "One fact per bullet, under 150 characters, no prose. Forms: 'name: value unit (condition)' e.g. 'Mill.P1.flow: 20 L/min when running'; 'a -> b: relation' e.g. 'Mill.P1 -> Mill.T1: fills'; 'if condition then effect' for rules. Never join two facts with ';', ',' lists or 'and': split them into separate bullets. When the text covers several systems, start every name with its system name. Copy numbers, units, limits and times exactly. If the text says something is unknown or not given, write 'name: unknown'. Write all notes in one save. If the checker reports a problem, split or shorten that bullet."
+    },
+    "factor": "B",
+    "rationale": "run 5's + text"
+   }
+  ],
+  "answering": [
+   {
+    "value": {
+     "answering_text": "1. Name the system and parts the question asks about. Find every bullet that mentions them, including the system-prefixed names.\n2. Gather the values with units, rules and relations that apply. For cause or effect questions, follow the relation chain one link at a time.\n3. For a calculation, write the formula, insert the noted numbers and check the units.\n4. For timing, put the noted events in time order before answering.\n5. Never use a value from another system whose part has a similar name.\n6. If the notes mark the fact unknown or do not contain it, answer that it is unknown. Do not guess.\n7. Give a short direct answer, with the number and unit where there is one."
+    },
+    "factor": "C",
+    "rationale": "run 5's + text"
+   }
+  ],
+  "example": [
+   {
+    "value": {
+     "examples": [
+      "THINGS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\nVALUES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Farm.V1.flow: unknown\n- Lab.F1.setpoint: -20 C\nRULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nLINKS\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger"
+     ],
+     "examples_new_layout": [
+      "SYSTEMS & PARTS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nQUANTITIES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Lab.F1.setpoint: -20 C\nCAUSES & RULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger\nUNKNOWNS\n- Farm.V1.flow: unknown"
+     ]
+    },
+    "factor": "D",
+    "rationale": "run 5's + text"
+   }
+  ],
+  "budget": [
+   {
+    "value": {
+     "max_turns": 24
+    },
+    "factor": "E",
+    "rationale": "run 5's + text"
+   }
+  ]
+ },
+ "extras": {
+  "plus": {
+   "A": {
+    "core_params": {
+     "headers": [
+      "SYSTEMS & PARTS",
+      "QUANTITIES",
+      "CAUSES & RULES",
+      "TIMING",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    }
+   },
+   "B": {
+    "guidance_text": "One fact per bullet, under 150 characters, no prose. Forms: 'name: value unit (condition)' e.g. 'Mill.P1.flow: 20 L/min when running'; 'a -> b: relation' e.g. 'Mill.P1 -> Mill.T1: fills'; 'if condition then effect' for rules. Never join two facts with ';', ',' lists or 'and': split them into separate bullets. When the text covers several systems, start every name with its system name. Copy numbers, units, limits and times exactly. If the text says something is unknown or not given, write 'name: unknown'. Write all notes in one save. If the checker reports a problem, split or shorten that bullet."
+   },
+   "C": {
+    "answering_text": "1. Name the system and parts the question asks about. Find every bullet that mentions them, including the system-prefixed names.\n2. Gather the values with units, rules and relations that apply. For cause or effect questions, follow the relation chain one link at a time.\n3. For a calculation, write the formula, insert the noted numbers and check the units.\n4. For timing, put the noted events in time order before answering.\n5. Never use a value from another system whose part has a similar name.\n6. If the notes mark the fact unknown or do not contain it, answer that it is unknown. Do not guess.\n7. Give a short direct answer, with the number and unit where there is one."
+   },
+   "D": {
+    "examples": [
+     "THINGS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\nVALUES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Farm.V1.flow: unknown\n- Lab.F1.setpoint: -20 C\nRULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nLINKS\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger"
+    ],
+    "examples_new_layout": [
+     "SYSTEMS & PARTS\n- Farm.T1: water tank, 1000 L capacity\n- Farm.P1: pump\n- Farm.V1: drain valve on T1\n- Lab.F1: freezer\n- Farm.P1 -> Farm.T1: fills\n- Farm.T1 -> Farm.V1: drains through\nQUANTITIES\n- Farm.T1.level: 40% at start\n- Farm.P1.flow: 50 L/min when on\n- Lab.F1.setpoint: -20 C\nCAUSES & RULES\n- if Farm.T1.level > 90% then Farm.P1 stops\n- if Lab.F1.temp > -15 C then Lab alarm sounds\nTIMING\n- Farm.P1: starts 06:00 daily\n- Lab alarm: delay 5 min after trigger\nUNKNOWNS\n- Farm.V1.flow: unknown"
+    ]
+   },
+   "rationale": {
+    "A": "Adding a system-aware parts section and a dedicated unknowns section gives the notes a set place for system boundaries and unknown facts, which matter most at k=8, with no extra syntax and the fine granularity kept as is.",
+    "B": "Most failed builds came from several facts in one element and from long elements, almost all at k=8, so the rules set a hard length limit, ban joined facts, require system prefixes to avoid mixing up systems, and ask for a single save so tool calls are not spent on repeated rewrites.",
+    "C": "A fixed retrieve, chain, compute, order and abstain procedure lets a small model use system-prefixed facts without mixing up systems or guessing missing values, and it names no section, so it works with both layouts.",
+    "D": "One short two-system example shows system prefixes, one fact per bullet, units, a rule, a relation, a time and an explicit unknown, all in the exact bullet form the checker accepts."
+   },
+   "E": {
+    "max_turns": 24
+   },
+   "winner": "gd6f99b53eb9",
+   "hash": "4026134b9d7a7923",
+   "evidence_hash": "a7a994c5bd48df21"
+  }
+ },
+ "hash": "b8fd171cb00a6dc0"
+}

@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+work/*/records/
+work/*/pack_records/
+work/*/candidates/
+work/*.log
+work/toy/

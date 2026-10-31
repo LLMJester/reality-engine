@@ -1,0 +1,201 @@
+{
+ "extras": {
+  "cands": {
+   "s1a1": {
+    "slot": 1,
+    "archetype": 1,
+    "value": {
+     "headers": [
+      "THINGS",
+      "VALUES",
+      "RULES & LINKS",
+      "TIMING"
+     ],
+     "tags": false,
+     "granularity": "coarse"
+    },
+    "rationale": "Most failed builds broke the one-fact-per-element rule (46 of 53, mostly at k=8), so coarse elements with indented continuation lines and a merged RULES & LINKS section remove that constraint and the fix-up saves it causes, while keeping the familiar header words that stage 2's renaming lost points ",
+    "length": 100
+   },
+   "s1a2": {
+    "slot": 1,
+    "archetype": 2,
+    "value": {
+     "headers": [
+      "ENTITY IDS",
+      "INPUTS & OUTPUTS",
+      "EDGES",
+      "VALUES",
+      "RULES",
+      "TIMING",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "For k=8 the model first assigns every part a unique ID, then lists each part's inputs and outputs and the edges between IDs, so causes and flows across many similar-named parts stay apart; a dedicated UNKNOWNS section keeps 'not given' facts from being dropped.",
+    "length": 135
+   },
+   "s1a3": {
+    "slot": 1,
+    "archetype": 3,
+    "value": {
+     "headers": [
+      "THINGS",
+      "VALUES",
+      "RULES",
+      "LINKS",
+      "TIMING",
+      "UNKNOWNS",
+      "COVERAGE CHECK"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "A final COVERAGE CHECK section makes the model count each system's parts, values, rules and timings against the text before it saves, and an UNKNOWNS section records explicitly what the text leaves open; together they catch omissions, which grow with k, inside the single save.",
+    "length": 129
+   },
+   "s1a4": {
+    "slot": 1,
+    "archetype": 4,
+    "value": {
+     "headers": [
+      "SYSTEMS",
+      "THINGS",
+      "VALUES",
+      "RULES",
+      "LINKS",
+      "TIMING"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "The only change is a leading SYSTEMS section that lists each separate system and the name prefix its parts use; this gives the k=4 and k=8 notes an index that keeps facts from being mixed between systems, without altering the five sections that already score best.",
+    "length": 110
+   },
+   "s2a1": {
+    "slot": 2,
+    "archetype": 1,
+    "value": "One fact per bullet. Keep each bullet short and plain, for example 'T1.level: 40% at start', 'P1 -> T1: fills' or 'if T1 is above 90% then P1 stops'. Use whatever short form states the fact most clearly; exact wording does not matter. Copy every number with its unit and condition. If the text says something is not known or not given, write it down as unknown. Put each fact where it fits best and do not spend effort on placement.",
+    "rationale": "This version drops the forced two-form syntax and the no-repetition and placement constraints, which cost effort and caused rewrites, and keeps only one-fact-per-bullet, which the checker enforces, plus exact numbers.",
+    "length": 432
+   },
+   "s2a2": {
+    "slot": 2,
+    "archetype": 2,
+    "value": "Give every part a fixed ID and use only that ID afterwards. If the description covers more than one separate plant, network or service, give each one a short letter tag (A, B, C ...). Start every ID with that tag, for example 'A.P1' and 'B.P1', even when the text uses the same part name in both. Declare each part once with one bullet: 'A.P1: pump'. Write each quantity as 'ID.attribute: number unit (condition)', for example 'A.P1.flow: 50 L/min when on'. Write each connection or cause as a directed edge between IDs: 'A.P1 -> A.T1: fills'. For each part that takes something in or puts something out, write one bullet per direction: 'A.P1 in: power from A.G1' and 'A.P1 out: water to A.T1'. Write each condition as 'if ID.attribute op number then effect'. Write each time fact as 'ID: event at/after time'. Write each missing fact as 'ID.attribute: unknown'. Exactly one fact per bullet and under 200 characters. Never list several parts or numbers in one bullet; write one bullet each.",
+    "rationale": "Tagged IDs and per-direction input/output bullets stop parts with similar names in large multi-plant texts (k=8) from being mixed up. The single-fact format stays within the checker's limits.",
+    "length": 990
+   },
+   "s2a3": {
+    "slot": 2,
+    "archetype": 3,
+    "value": "Write every fact as one short bullet: 'name: value unit (condition)' or 'a -> b: relation'. One fact per bullet. Before you save, run this check in your head and fix gaps; do not save in several passes. (1) Go through the description paragraph by paragraph. Every number with a unit, every cause or effect, every condition, every time, delay or order, and every statement that something is unknown or not given must have its own bullet. Add any that are missing. (2) If the text covers several separate setups, every name must show which setup it belongs to. No two setups may share a bare name. (3) Follow each cause chain from the start to the end through your bullets and add any missing step. (4) Any bullet holding two numbers, a list, ';' or 'and' joining two facts gets split into separate bullets. Then save all notes once.",
+    "rationale": "A coverage-and-trace pass done before one single save catches missing facts and joined facts. Saves cost a full rewrite, so this prevents the k=8 recall losses and checker failures without spending extra tool calls.",
+    "length": 831
+   },
+   "s2a4": {
+    "slot": 2,
+    "archetype": 4,
+    "value": "Write every fact as one short bullet in key-value form: 'name: value' (for example 'T1.level: 40% at start') or 'a -> b: relation' (for example 'P1 -> T1: fills'). One fact per bullet, no prose, no repetition. When one sentence of the text holds several facts (a list of parts, two numbers, a cause and a time), write a separate bullet for each one. Never join facts with ';', 'and' or commas. Put each fact under the section it belongs to.",
+    "rationale": "Joined facts caused 46 of the 53 checker failures, almost all at k=4 and k=8. A single explicit splitting instruction targets that failure mode directly and leaves everything else unchanged.",
+    "length": 440
+   },
+   "s3a1": {
+    "slot": 3,
+    "archetype": 1,
+    "value": "Before saving, reread each line once. If a line states more than one fact, or covers two parts, two numbers or two conditions, split it into separate lines. If a line runs long, shorten or split it. Then save everything in one call. The checker shows only the first problem. When it reports one, fix that line and every other line with the same fault in the same save, then stop once it passes.",
+    "rationale": "Most failed builds came from lines holding several facts, mostly at k=8, and the checker shows only the first problem; one self-check before saving and a batched fix afterwards address both at almost no token cost.",
+    "length": 394
+   },
+   "s3a2": {
+    "slot": 3,
+    "archetype": 2,
+    "value": "Before writing, build an inventory in your head or in a scratch draft. Give each separate system in the description a short unique prefix. Give each part, store, signal or actor an identifier made of that prefix and a short part name, and use exactly that identifier everywhere afterwards. Never reuse a bare part name across two systems, even when the text does. For each part, list what enters it, what leaves it, what it controls and what controls it. Each such pair becomes one relation fact naming both identifiers. Write the notes into the existing sections only, one system's facts grouped together within each section. Before saving, check four things. First, every identifier used in a relation or condition is declared once as a part. Second, every declared part appears in at least one other fact. Third, no fact mixes identifiers from two systems unless the text states a cross-system connection. Fourth, each line holds a single fact about one part or one pair. Then save once. If the checker reports a problem, fix all lines of that kind together in the next save.",
+    "rationale": "At k=8 the main risks are confusing parts that share names across systems and losing relation endpoints; stable prefixed identifiers and an input-output inventory per part make the notes navigable and the relations complete.",
+    "length": 1078
+   },
+   "s3a3": {
+    "slot": 3,
+    "archetype": 3,
+    "value": "After drafting and before saving, run a trace against the description. Go through it paragraph by paragraph. For each sentence, confirm that every part, number with its unit, limit, condition, cause, delay, order of events and statement that something is unknown or not given appears in the notes. Add any that are missing. Copy numbers and units exactly as written, not rounded or converted. Next, check the draft against itself. Each condition names its trigger and its effect. Each cause names both ends. Each quantity says when or under what condition it holds. Nothing is stated twice. Nothing contradicts the text. Finally, check the form: one fact per line, short lines, no prose, and every line an element. Save once. The checker shows only the first problem, so after any report, scan the whole draft for the same fault and fix every instance in one save.",
+    "rationale": "Answers fail when a fact never reached the notes, so a sentence-by-sentence trace before saving directly improves coverage, and the final form check plus batched fixing cuts layout failures without spending turns.",
+    "length": 864
+   },
+   "s3a4": {
+    "slot": 3,
+    "archetype": 4,
+    "value": "When the description covers four or more separate systems, check balance before saving. Count your facts for each system and compare that with how much the description says about it. A system whose facts are much fewer than its share of the text, or that lacks any quantity, condition or time it was given, is incomplete. Reread that system's passages and add what is missing as separate single-fact lines. Do not merge lines to save space.",
+    "rationale": "Scores drop most at k=4 and k=8, where long outputs tend to thin out later systems and merge facts; a per-system balance check targets exactly that failure and adds nothing at small k.",
+    "length": 440
+   },
+   "s4a1": {
+    "slot": 4,
+    "archetype": 1,
+    "value": "Answer from the notes only. Find the bullets that name what the question asks about, and read them before answering. Copy numbers and units exactly as noted. If the notes say a fact is unknown, or do not contain it, say it is unknown rather than guessing. Give a short, direct answer.",
+    "rationale": "The longer seven-step procedure in stage 2 scored worse, so the smallest useful addition gives only the two behaviours that matter most: stay faithful to the notes and say unknown when a fact is missing, with no extra process to add answer tokens or errors.",
+    "length": 284
+   },
+   "s4a2": {
+    "slot": 4,
+    "archetype": 2,
+    "value": "Work in three short steps before the final answer.\n1. Entity list: write the ids of every part the question mentions, using the full noted name with its prefix (for example Farm.T1). Add each part directly connected to them by an 'a -> b' bullet. Stop expanding after two hops unless the question asks for a longer chain.\n2. Edge table: one row per relevant 'a -> b' bullet, in the form 'source | target | relation'. For a cause or effect question, read the rows from source to target to get the chain.\n3. Input-output table: one row per entity in the form 'id | inputs (number unit) | outputs (number unit) | conditions that change them | time or delay'. Fill each cell only from bullets. Write '?' where no bullet gives it.\nThen compute or reason over the table rows only. Do not use a row whose id prefix differs from the entities in step 1. If a cell the answer needs is '?', answer that it is unknown or not given. End with one line: 'Answer: ...', with the number and unit where there is one.",
+    "rationale": "With eight systems in one set of notes, collecting the relevant ids, edges and input-output cells into small tables keeps the answerer on the right part and turns chains and calculations into lookups instead of long scans.",
+    "length": 998
+   },
+   "s4a3": {
+    "slot": 4,
+    "archetype": 3,
+    "value": "Draft, then check, then answer.\nDraft: find the bullets that bear on the question and give a provisional answer. Quote each bullet you rely on, word for word.\nCheck each point below. Fix the draft whenever a check fails.\n- Source: every number, unit, condition and relation in the draft appears in a quoted bullet. Remove anything that comes only from general knowledge.\n- Identity: each quoted bullet is about the exact part asked about, not a similar name.\n- Conditions: the question's situation (state, mode, time, threshold) matches the condition attached to each quoted fact. If a different condition applies, find the bullet for that condition.\n- Chain: for cause, effect or 'what happens if' questions, trace each step from start to end and confirm that every step has its own bullet. A missing step means the effect is not established.\n- Arithmetic: redo any calculation and check that the units cancel to the unit asked for.\n- Order: for questions about sequence or delay, list the noted events with their times and confirm the order.\n- Gaps: if a needed fact is marked unknown or is absent, the answer is 'unknown' or 'not given'. Do not fill the gap with an estimate.\nThen give the final answer in one short line.",
+    "rationale": "Small models mostly lose points by using unsupported facts, ignoring conditions or breaking a causal chain, and a quote-then-verify pass catches each of these before output.",
+    "length": 1224
+   },
+   "s4a4": {
+    "slot": 4,
+    "archetype": 4,
+    "value": "If the notes cover more than one separate plant, network or service, first decide from the question's wording which one it is about. Then use only bullets whose names carry that one's prefix or that clearly belong to it, even when another one has a part with the same short name such as P1 or T1. If you cannot tell which one is meant, or its bullets lack the fact, answer that it is unknown.",
+    "rationale": "Scores fall most at k=4 and k=8, where several combined systems reuse short part names, so the one surgical change is to scope each answer to a single system before reading any facts.",
+    "length": 392
+   },
+   "s5a1": {
+    "slot": 5,
+    "archetype": 1,
+    "value": "## THINGS\n- Tank: rain tank 500 L\n- Pump: feeds sprinklers\n## VALUES\n- Tank.level: 60% at start\n- Pump.flow: 20 L/min\n- Pump.power: unknown\n## RULES\n- if Tank.level < 10% then Pump stops\n## LINKS\n- Tank -> Pump: supplies\n## TIMING\n- Pump: runs 07:00 to 07:30 daily",
+    "rationale": "The current example slot is empty, so this adds the smallest valid notes document: one bullet per fact, an explicit unknown, and nothing that would push the builder toward long or compound bullets.",
+    "length": 264
+   },
+   "s5a2": {
+    "slot": 5,
+    "archetype": 2,
+    "value": "## THINGS\n- Bakery.O1: oven\n- Bakery.F1: cooling fan\n- Bakery.S1: temperature sensor\n- Hotel.B1: boiler\n- Hotel.R1: radiator loop\n## VALUES\n- Bakery.O1.temp_max: 250 C\n- Bakery.F1.speed: 1200 rpm when on\n- Bakery.S1.accuracy: unknown\n- Hotel.B1.output: 80 kW\n- Hotel.R1.flow: 3 L/s\n## RULES\n- R1: if Bakery.S1.temp > 260 C then Bakery.O1 shuts off\n- R2: if Hotel.B1.pressure > 3 bar then Hotel.B1 trips\n## LINKS\n- E1: Bakery.F1 -> Bakery.O1: cools\n- E2: Bakery.S1 -> Bakery.O1: measures\n- E3: Hotel.B1 -> Hotel.R1: heats\n- Bakery.O1.in: E1 E2\n- Hotel.R1.in: E3\n## TIMING\n- T1: Bakery.O1 preheat takes 15 min\n- T2: Hotel.B1 starts 05:30 daily\n- T3: R1 acts 10 s after trigger",
+    "rationale": "System-prefixed entity IDs, numbered rule, edge and timing IDs, and per-entity input lists give the builder a structure that scales to k=8 without names colliding between systems.",
+    "length": 674
+   },
+   "s5a3": {
+    "slot": 5,
+    "archetype": 3,
+    "value": "## THINGS\n- Kiln.K1: electric kiln\n- Kiln.H1: heating element in K1\n- Kiln.D1: door switch\n- Kiln.C1: controller\n## VALUES\n- Kiln.K1.temp_max: 1300 C\n- Kiln.H1.power: 9 kW\n- Kiln.D1.state: closed at start\n- Kiln.C1.ramp: 100 C/h\n- Kiln.K1.volume: unknown (not given)\n## RULES\n- if Kiln.D1 opens then Kiln.H1 turns off\n- if Kiln.K1.temp > 1300 C then Kiln.C1 cuts Kiln.H1\n## LINKS\n- Kiln.C1 -> Kiln.H1: switches\n- Kiln.H1 -> Kiln.K1: heats\n- Kiln.D1 -> Kiln.C1: signals\n## TIMING\n- Kiln.C1.ramp_start: 08:00\n- Kiln.K1.cooling: unknown duration (not given)\n- Kiln.H1.off_delay: under 1 s after door opens",
+    "rationale": "The example models a completeness check: every part has at least one value and appears in a link, and every gap is written as an explicit unknown, so the builder learns to audit coverage before saving.",
+    "length": 602
+   },
+   "s5a4": {
+    "slot": 5,
+    "archetype": 4,
+    "value": "## THINGS\n- Dairy.C1: milk cooler\n- Lift.M1: lift motor\n- Pool.P1: filter pump\n- Pool.F1: sand filter\n- Rack.U1: backup battery\n- Rack.S1: server\n## VALUES\n- Dairy.C1.setpoint: 4 C\n- Lift.M1.load_max: 630 kg\n- Pool.P1.flow: 12 m3/h\n- Rack.U1.runtime: 20 min\n- Rack.U1.age: unknown\n## RULES\n- if Lift.M1.load > 630 kg then Lift.M1 stays stopped\n- if Dairy.C1.temp > 7 C then Dairy alarm sounds\n## LINKS\n- Pool.P1 -> Pool.F1: pushes water through\n- Rack.U1 -> Rack.S1: powers\n## TIMING\n- Pool.P1: runs 8 h per day\n- Dairy alarm: delay 10 min after trigger\n- Rack.U1: takes over within 1 s after mains loss",
+    "rationale": "The one change is an example that mixes four systems, each with its own name prefix and with one short fact per bullet; it targets the cross-system mix-ups and compound-bullet check failures that cluster at k=4 and k=8.",
+    "length": 603
+   }
+  },
+  "stage": 3,
+  "cube": {
+   "0|0|0": "",
+   "0|0|s5a1": "## THINGS\n- Tank: rain tank 500 L\n- Pump: feeds sprinklers\n## VALUES\n- Tank.level: 60% at start\n- Pump.flow: 20 L/min\n- Pump.power: unknown\n## RULES\n- if Tank.level < 10% then Pump stops\n## LINKS\n- Tank -> Pump: supplies\n## TIMING\n- Pump: runs 07:00 to 07:30 daily",
+   "0|0|s5a2": "## THINGS\n- Bakery.O1: oven\n- Bakery.F1: cooling fan\n- Bakery.S1: temperature sensor\n- Hotel.B1: boiler\n- Hotel.R1: radiator loop\n## VALUES\n- Bakery.O1.temp_max: 250 C\n- Bakery.F1.speed: 1200 rpm when on\n- Bakery.S1.accuracy: unknown\n- Hotel.B1.output: 80 kW\n- Hotel.R1.flow: 3 L/s\n## RULES\n- R1: if Bakery.S1.temp > 260 C then Bakery.O1 shuts off\n- R2: if Hotel.B1.pressure > 3 bar then Hotel.B1 trips\n## LINKS\n- E1: Bakery.F1 -> Bakery.O1: cools\n- E2: Bakery.S1 -> Bakery.O1: measures\n- E3: Hotel.B1 -> Hotel.R1: heats\n- Bakery.O1.in: E1 E2\n- Hotel.R1.in: E3\n## TIMING\n- T1: Bakery.O1 preheat takes 15 min\n- T2: Hotel.B1 starts 05:30 daily\n- T3: R1 acts 10 s after trigger",
+   "0|0|s5a3": "## THINGS\n- Kiln.K1: electric kiln\n- Kiln.H1: heating element in K1\n- Kiln.D1: door switch\n- Kiln.C1: controller\n## VALUES\n- Kiln.K1.temp_max: 1300 C\n- Kiln.H1.power: 9 kW\n- Kiln.D1.state: closed at start\n- Kiln.C1.ramp: 100 C/h\n- Kiln.K1.volume: unknown (not given)\n## RULES\n- if Kiln.D1 opens then Kiln.H1 turns off\n- if Kiln.K1.temp > 1300 C then Kiln.C1 cuts Kiln.H1\n## LINKS\n- Kiln.C1 -> Kiln.H1: switches\n- Kiln.H1 -> Kiln.K1: heats\n- Kiln.D1 -> Kiln.C1: signals\n## TIMING\n- Kiln.C1.ramp_start: 08:00\n- Kiln.K1.cooling: unknown duration (not given)\n- Kiln.H1.off_delay: under 1 s after door opens",
+   "0|0|s5a4": "## THINGS\n- Dairy.C1: milk cooler\n- Lift.M1: lift motor\n- Pool.P1: filter pump\n- Pool.F1: sand filter\n- Rack.U1: backup battery\n- Rack.S1: server\n## VALUES\n- Dairy.C1.setpoint: 4 C\n- Lift.M1.load_max: 630 kg\n- Pool.P1.flow: 12 m3/h\n- Rack.U1.runtime: 20 min\n- Rack.U1.age: unknown\n## RULES\n- if Lift.M1.load > 630 kg then Lift.M1 stays stopped\n- if Dairy.C1.temp > 7 C then Dairy alarm sounds\n## LINKS\n- Pool.P1 -> Pool.F1: pushes water through\n- Rack.U1 -> Rack.S1: powers\n## TIMING\n- Pool.P1: runs 8 h per day\n- Dairy alarm: delay 10 min after trigger\n- Rack.U1: takes over within 1 s after mains loss"
+  },
+  "best_id": "gd6f99b53eb9"
+ },
+ "needs_approval": false,
+ "hash": "cf17aba5604457cc"
+}
