@@ -10,7 +10,7 @@ and can pass it options (`"pack_options": {...}`).
 ## 1. Candidates
 
 A **candidate** is whatever you are choosing between: a prompt, a note format, an agent's instructions, a
-configuration. To the engine it is a JSON-serialisable dict with one required key, `"id"`. **Equal contents must give
+configuration. To the engine it is a JSON-serializable dict with one required key, `"id"`. **Equal contents must give
 an equal id.** Hash the parts that change behaviour, not the name. The engine relies on this to reuse a run it has
 already done, and to know that "no changes" means "the same candidate".
 

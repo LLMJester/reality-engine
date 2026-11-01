@@ -1,6 +1,6 @@
 # The code that ran run 5
 
-This folder is the code that ran *Describing Reality for AI* (run 5 of the Discovery Programme), copied unchanged.
+This folder is the code that ran *Describing Reality for AI* (run 5 of the Discovery Program), copied unchanged.
 `MANIFEST.json` lists every file with its SHA-256 and the commits it came from. The results, the paper and the rules
 the run was locked to are in [describing-reality-for-ai](https://github.com/LLMJester/describing-reality-for-ai).
 

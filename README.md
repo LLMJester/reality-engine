@@ -120,7 +120,7 @@ resume.
 
 ## The first pack: Describing Reality for AI
 
-`packs/describing_reality/` is run 5 of the Discovery Programme as a pack. A small model (GPT-6 Luna) reads a long,
+`packs/describing_reality/` is run 5 of the Discovery Program as a pack. A small model (GPT-6 Luna) reads a long,
 messy description of a system, writes notes in a prescribed format, and later answers questions from its notes
 alone. The pack is an **adapter**: the problem code itself (designs, the two-phase episode, the grader, the
 designer's prompts and checks) is the code that ran run 5, kept unchanged in
