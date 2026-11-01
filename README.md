@@ -32,19 +32,33 @@ flowchart LR
 | Step | What happens | Code |
 |---|---|---|
 | 1 Define | A pack says what a candidate is, how test cases are made and scored, how a candidate splits into parts, and who writes new versions | `engine/pack.py`, `packs/` |
-| 2 Lock | The plan (every rule of the run) and the code are fingerprinted. The run refuses to start if anything changed since | `engine/plan.py` |
-| 3 Compare | Every candidate, the current setup (the control) among them, runs on the same cases. Means come with 95% cluster-bootstrap ranges. Hsu's test keeps every candidate that could still be best; leads over the control are Holm-corrected | `Engine.compare` |
-| 4 Take apart | The designer writes one new version of each of the winner's parts. Every combination is run (2^m, a full factorial). The gated keep rule decides | `Engine.takeapart_*` |
+| 2 Lock | The plan (every rule of the run) and the code are fingerprinted ([pre-registration][prereg]). The run refuses to start if anything changed since | `engine/plan.py` |
+| 3 Compare | Every candidate, the current setup (the control) among them, runs on the same cases. Means come with 95% [cluster-bootstrap][cluster] ranges. [Hsu's test][hsu] keeps every candidate that could still be best; leads over the control are [Holm][holm]-corrected | `Engine.compare` |
+| 4 Take apart | The designer writes one new version of each of the winner's parts. Every combination is run (2^m, a [full factorial][factorial]). The gated keep rule decides | `Engine.takeapart_*` |
 | 5 Build out | Up to N rounds. The designer writes several versions of each part from the firewalled brief. Each is screened alone on fresh cases against a fixed bar; the parts that pass are confirmed in every combination on more fresh cases | `Engine.round_*` |
-| 6 Confirm | The sealed set is opened once. The final design meets the control and its closest rivals in a fixed order (gatekeeping) | `Engine.final` |
+| 6 Confirm | The sealed set is opened once. The final design meets the control and its closest rivals in a fixed order ([fixed-sequence gatekeeping][gatekeeping]) | `Engine.final` |
 | 7 Report | Six numbers at a glance: how often it's right, reliability, why it fails, verdict, how hard we looked, headroom | `engine/report.py` |
 
 **The keep rule.** A change is kept only if (a) its own effect survives Holm's correction with a positive estimate,
 and (b) the design it gives then beats the current best head to head, with the whole 95% range above zero. Picking
-the highest raw score would reward luck (the winner's curse).
+the highest raw score would reward luck (the [winner's curse][curse]).
 
 **The stopping rules.** The rounds stop when no part's best new version clears the screen's bar, when no mix beats
 the current best, or when the gain falls below the convergence bar.
+
+**The methods, at their sources.** [Pre-registration][prereg]: Nosek et al. (2018), PNAS. [Cluster bootstrap][cluster]:
+Field and Welsh (2007), JRSS B. [Multiple comparisons with the best][hsu]: Hsu (1984), Annals of Statistics.
+[Holm's correction][holm]: Holm (1979), Scandinavian Journal of Statistics. [Two-level full factorial
+designs][factorial]: NIST/SEMATECH e-Handbook of Statistical Methods. [The winner's curse][curse]: Ioannidis (2008),
+Epidemiology. [Fixed-sequence gatekeeping][gatekeeping]: FDA guidance, Multiple Endpoints in Clinical Trials (2022).
+
+[prereg]: https://doi.org/10.1073/pnas.1708274114
+[cluster]: https://doi.org/10.1111/j.1467-9868.2007.00593.x
+[hsu]: https://doi.org/10.1214/aos/1176346732
+[holm]: https://www.jstor.org/stable/4615733
+[factorial]: https://www.itl.nist.gov/div898/handbook/pri/section3/pri3331.htm
+[curse]: https://doi.org/10.1097/EDE.0b013e31818131e7
+[gatekeeping]: https://www.fda.gov/media/162416/download
 
 ## Quick start (no model, no network)
 
