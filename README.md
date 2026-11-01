@@ -76,7 +76,7 @@ the trust report.
 What it shows:
 - **The engine finds the hidden best founder.** FACTS wins, because its fact-writing rule adds the most in the hidden
   table.
-- **The keep rule's price at small sizes.** The hidden table also gives a table layout a real +0.07. The engine
+- **The keep rule's price at small sizes.** The hidden table also gives a table layout a real +0.035 (its 0.07 bonus is halved outside the rules slot). The engine
   measured it (+0.04, passing the effect test), but on only 80 items the new design's head-to-head lead, +0.036
   (range −0.013 to +0.086), did not clear zero, so the engine kept the original and the report says so. A strict rule
   is hard to fool with luck; the price is that a small real gain needs more items before it is adopted.
