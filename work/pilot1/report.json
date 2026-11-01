@@ -61,14 +61,14 @@
  },
  "headroom": {
   "closest_rival": {
-   "test": "1_vs_control",
-   "rival": "A0P",
-   "lead": 0.1797,
+   "test": "2_vs_runner_up",
+   "rival": "SEC_FLOW",
+   "lead": 0.2083,
    "range": [
-    0.0686,
-    0.2908
+    -0.1556,
+    0.5722
    ],
-   "counted": true
+   "counted": false
   },
   "best_unproven": {
    "where": "take apart",

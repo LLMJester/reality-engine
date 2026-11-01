@@ -45,7 +45,9 @@ def summary(eng):
     effort = {"founders": len(eng.founders()), "new_versions": versions, "designs_built": len(cands),
               "runs": runs, "stages": 1 + ("takeapart" in an) + len(rounds) + bool(fin), "changes_kept": len(kept)}
     # headroom
-    closest = min(verdict, key=lambda v: v["lead"] if v["lead"] is not None else 9, default=None)
+    # the closest rival not yet beaten (a lead that did not count); if every lead counted, the smallest lead
+    unbeaten = [v for v in verdict if not v["counted"]] or verdict
+    closest = min(unbeaten, key=lambda v: v["lead"] if v["lead"] is not None else 9, default=None)
     unproven = [h for h in hist if h.get("effect") is not None and h["verdict"] not in ("kept",)
                 and not h["verdict"].startswith("design ")]
     best_unproven = max(unproven, key=lambda h: h["effect"], default=None)

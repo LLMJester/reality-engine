@@ -159,7 +159,7 @@ the engine's brief. It made 672 runs in 38 minutes, unattended (approval "auto")
 | Step | What happened |
 |---|---|
 | Compare: 4 founders × 32 cases (8 systems) | FACTS 72% [67–78], SEC_FLOW 64%, SEC_A1 51%, A0P (plain prose) 51% |
-| Take apart: Opus wrote new layout, rules and answering; 8 designs × 32 | No part earned its place; FACTS kept |
+| Take apart: Opus wrote new layout, rules and answering; 8 designs × 32 | No part earned its place (the closest, new rules, +0.036, not proven); FACTS kept |
 | Round 1: Opus wrote 4 versions of each part; screen 13 × 16 | One version (answering 2, +0.034) cleared the bar |
 | Round 1: confirmation 2 × 16 | It did not beat FACTS; the rounds stop |
 | Final check on 16 sealed cases (4 systems) | FACTS 68% [53–80]; vs A0P **+0.18 [0.07, 0.29], counted**; vs SEC_FLOW +0.21 [−0.16, 0.57], not counted |

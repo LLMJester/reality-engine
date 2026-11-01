@@ -1,14 +1,14 @@
 {
- "t": "2026-10-31T20:18:17",
- "reason": "after the run: the pack folder gained run5/, the unchanged code that ran run 5, and pack.py now falls back to it when ../rpp-v3 is absent; no engine or pack logic changed (the fresh replay still matches 712/712)",
- "sha256": "90907ea3c4bb60a3adce9891ee250835c1c351cd2cf18d961389cf8f12ba97ee",
+ "t": "2026-10-31T23:04:33",
+ "reason": "after the run: report.py's headroom tile now names the closest rival not yet beaten (an uncounted lead) instead of the smallest lead overall; no other change",
+ "sha256": "24124be0822620e647c0a8492695b099fd403b5d09745c1fdc46820950b80da4",
  "files": {
   "engine/__init__.py": "18a38b2bb33b624f",
   "engine/__main__.py": "f1ca3c25cd0c8734",
   "engine/brief.py": "e7ae3a4c63e61e15",
   "engine/pack.py": "ddebf126b660cf40",
   "engine/plan.py": "8222ed303c45c9ed",
-  "engine/report.py": "7220e4f80efe4b83",
+  "engine/report.py": "d58ae55ea3b1a458",
   "engine/runner.py": "8025e5a8543688a3",
   "engine/stages.py": "59e39224ca2ef74c",
   "engine/stats.py": "3f8a4bdcdbd199c0",
