@@ -76,6 +76,18 @@ def test_toy_run_end_to_end(tmp_path):
     assert (eng.work / "report.html").read_text(encoding="utf-8").startswith("<!doctype html>")
 
 
+def test_a_part_that_loses_head_to_head_is_not_reported_as_kept(tmp_path):
+    plan = toy_plan(tmp_path)
+    eng = Engine(plan, check_lock=False)
+    eng.loop()
+    ta = eng.analysis()["takeapart"]
+    assert ta["kept_mains"] and not ta["replaces"]               # the toy's layout passes the effect test, then loses
+    hist = {h["slot"]: h["verdict"] for h in eng.st["history"] if h["where"] == "take apart"}
+    assert all(hist[s] != "kept" for s in ta["kept_mains"])
+    rep = json.loads((eng.work / "report.json").read_text(encoding="utf-8"))
+    assert rep["effort"]["changes_kept"] == 0
+
+
 def test_run_refuses_without_a_matching_lock(tmp_path):
     plan = toy_plan(tmp_path)
     with pytest.raises(SystemExit):

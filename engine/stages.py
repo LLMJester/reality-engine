@@ -280,13 +280,18 @@ class Engine:
             e = res["effects"][s]
             self.st["history"].append({"where": "take apart", "slot": s, "effect": e["effect"], "range": e["range"],
                                        "value": doc["alts"][s][0].get("value"),
-                                       "verdict": "kept" if s in res["kept_mains"] else "not kept"})
+                                       "verdict": ("not kept" if s not in res["kept_mains"] else "kept"
+                                                   if res["replaces"] else
+                                                   "passed the effect test; not kept (lost head to head)")})
         fd = designs[res["final_design"]]
         self.st["best"] = {"label": f"take apart {res['final_design']}", "id": fd["id"], "folder": "takeapart",
                            "items": self.plan["sets"]["takeapart"], "from": "takeapart"}
         self.st["step"] = "round_write" if self.plan["sets"].get("rounds") else "final"
         self.event(f"take apart done: {res['final_design']} "
-                   f"({'replaces' if res['replaces'] else 'keeps'} the winner; kept parts {res['kept_mains'] or 'none'})")
+                   f"({'replaces' if res['replaces'] else 'keeps'} the winner; "
+                   + (f"kept parts {res['kept_mains']})" if res["replaces"] else
+                      f"passed the effect test {res['kept_mains']} but lost head to head)" if res["kept_mains"] else
+                      "no part passed the effect test)"))
 
     # ------------------------------------------------------------------ step 5: build out
     def bo_slots(self):
