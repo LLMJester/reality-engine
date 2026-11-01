@@ -110,8 +110,8 @@ resume.
 `packs/describing_reality/` is run 5 of the Discovery Programme as a pack. A small model (GPT-6 Luna) reads a long,
 messy description of a system, writes notes in a prescribed format, and later answers questions from its notes
 alone. The pack is an **adapter**: the problem code itself (designs, the two-phase episode, the grader, the
-designer's prompts and checks) is the run 5 harness, which it imports from `RPP_V3_HOME`. A public copy of the harness
-is in [describing-reality-for-ai/harness](https://github.com/LLMJester/describing-reality-for-ai).
+designer's prompts and checks) is the run 5 harness, which it imports from `RPP_V3_HOME`. A public copy of the harness, for
+reading, is in [describing-reality-for-ai/harness](https://github.com/LLMJester/describing-reality-for-ai).
 
 Two parts are deliberately not public:
 - **The world generator** that makes the test systems and their answer keys. With it, anyone could rebuild the answer
