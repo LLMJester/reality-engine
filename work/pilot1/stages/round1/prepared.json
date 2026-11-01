@@ -1,0 +1,140 @@
+{
+ "extras": {
+  "cands": {
+   "s1a1": {
+    "slot": 1,
+    "archetype": 1,
+    "value": {
+     "headers": [
+      "PARTS",
+      "FACTS",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "Cutting five hard-to-separate categories down to parts, all other facts, and explicit unknowns removes the misfiling and repetition that a small model makes when deciding between VALUES, RULES and LINKS, which saves tokens. It also gives the often-asked 'what is unknown' facts their own home.",
+    "length": 81
+   },
+   "s1a2": {
+    "slot": 1,
+    "archetype": 2,
+    "value": {
+     "headers": [
+      "ENTITY IDS",
+      "EDGES",
+      "INPUTS/OUTPUTS",
+      "QUANTITIES",
+      "CONDITIONS",
+      "SEQUENCE",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "For k=8, a registry of stable, system-prefixed entity identifiers followed by explicit edge and input-output sections lets every later bullet refer to a unique ID. This should stop facts from different systems being merged or confused, which is the main suspected cause of the k=8 score drop.",
+    "length": 144
+   },
+   "s1a3": {
+    "slot": 1,
+    "archetype": 3,
+    "value": {
+     "headers": [
+      "THINGS",
+      "VALUES",
+      "RULES",
+      "LINKS",
+      "TIMING",
+      "UNKNOWNS",
+      "TRACE CHECK",
+      "COVERAGE CHECK"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "Closing sections make the model trace one cause chain end to end and confirm that every part has its values, links and timing, or else an unknown entry, before submitting. This catches omissions while the description is still available, and omissions are what produce the wrong answers later.",
+    "length": 144
+   },
+   "s1a4": {
+    "slot": 1,
+    "archetype": 4,
+    "value": {
+     "headers": [
+      "SYSTEMS",
+      "THINGS",
+      "VALUES",
+      "RULES",
+      "LINKS",
+      "TIMING"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    },
+    "rationale": "Adding only a leading SYSTEMS section, which lists each separate system and its parts, keeps the proven layout intact. It gives k=4 and k=8 notes a top-level partition, so later bullets can be attributed to the right system.",
+    "length": 110
+   },
+   "s2a1": {
+    "slot": 2,
+    "archetype": 1,
+    "value": "Write each item as one short bullet. Use 'name: value' or 'a -> b: relation' when it fits naturally. When it does not fit, a short plain phrase is fine (for example 'P1 stops if T1 above 90%'). Keep the exact component names, numbers and units from the text, and keep any condition or time on the same bullet as the number it qualifies. If the text says something is not known, write that it is unknown rather than leaving it out. Put each bullet where it fits best.",
+    "rationale": "Dropping the rigid key-value form and the no-repetition rule lets a small model keep conditions and units attached to their numbers. That is where wrong answers likely come from, and it spends no extra tokens.",
+    "length": 466
+   },
+   "s2a2": {
+    "slot": 2,
+    "archetype": 2,
+    "value": "Give every component a short identifier made of a system letter and a number: A1, A2 for the first system described, B1, B2 for the second, and so on. Use A for everything if there is only one system. Declare each identifier once, the first time it appears, as 'A1 = Pump P1 (Water plant)'. After that, use only the identifier, never the bare name, so components from different systems cannot be confused. Write every quantity as 'A3.level: 40 % | when: at start'. Write every connection or cause as a directed line 'A1 -> A3: fills, 5 L/min | when: while A2 open'. For each component that has anything going in or coming out, add one table line 'A3 | in: A1 (water) | out: A4 (water) | stored: level'. Write a rule as 'if A3.level > 90 % then A1 stops'. Write something stated as unknown as 'A5.flow: unknown'. One item per line. Copy every number with its unit exactly. Do not put a connection between different system letters unless the text states one.",
+    "rationale": "Explicit system-lettered identifiers and per-component in/out lines give the small model unambiguous handles and local flow tables. This targets the k=8 drop, where entity mix-ups across systems are the likeliest error.",
+    "length": 956
+   },
+   "s2a3": {
+    "slot": 2,
+    "archetype": 3,
+    "value": "Write each item as one short bullet: 'name: value' (for example 'T1.level: 40% at start') or 'a -> b: relation' (for example 'P1 -> T1: fills'). Put a rule as 'if X then Y'. Before you submit, check your draft against the description paragraph by paragraph. (1) Every number in the paragraph appears in a bullet, with its unit and with the condition or time it applies to. (2) Every component the paragraph names appears in at least one bullet under the same name. (3) Every cause, trigger or limit the paragraph states appears as a relation or an if-then bullet. (4) Anything the paragraph calls unknown, unmeasured or uncertain is written as 'name: unknown'. Then pick one main flow in each separate system and follow it from start to end using only your bullets. If a step is missing, add it. Fix every gap with a patch before submitting, and do not add anything the text does not say.",
+    "rationale": "A paragraph-by-paragraph completeness pass plus one flow walk per system catches dropped numbers, causes and unknowns before submission. It uses the available patch tool without changing the bullet format.",
+    "length": 888
+   },
+   "s2a4": {
+    "slot": 2,
+    "archetype": 4,
+    "value": "Write every fact as one short bullet in key-value form: 'name: value' (for example 'T1.level: 40% at start') or 'a -> b: relation' (for example 'P1 -> T1: fills'). When the description covers more than one system, start every bullet with that system's short name and a slash (for example 'Water/T1.level: 40% at start', 'Water/P1 -> Water/T1: fills'), even if the component name looks unique. One fact per bullet, no prose, no repetition. Put each fact under the section it belongs to.",
+    "rationale": "The only change is a mandatory per-bullet system prefix when there are several systems, which directly targets cross-system confusion at k=4 and k=8. Everything else that already works stays the same.",
+    "length": 485
+   },
+   "s4a1": {
+    "slot": 4,
+    "archetype": 1,
+    "value": "Answer only from the notes. Find every bullet that names the component, number or event in the question, and answer from those bullets. Give the direct answer first, in one short line, with numbers and units copied exactly as written. If the answer needs a short chain such as 'a -> b' followed by 'b -> c', or a small calculation, follow it and state the result. Say 'not stated in notes' only when no bullet bears on the question at all. Otherwise give the best answer the bullets support.",
+    "rationale": "The earlier long procedure lowered the score, partly because 'do not guess' conflicted with 'always answer'. This adds only the essentials: look things up, answer directly, copy numbers exactly, and say 'not stated' only rarely.",
+    "length": 491
+   },
+   "s4a2": {
+    "slot": 4,
+    "archetype": 2,
+    "value": "Work in three short scratch steps, then answer.\nStep A, the ID list: write each component the question mentions as a full identifier exactly as it appears in the notes, including any prefix (for example Water.P1). Where the question uses a description, such as 'the second pump', match it to an identifier by checking the bullets.\nStep B, the edge table: copy every 'a -> b: relation' bullet that touches an identifier from Step A, one per row as: from | to | relation. Then add the edges that touch the newly reached identifiers, one hop further, and stop when the target of the question is reached or nothing new appears.\nStep C, the in/out table: for the component being asked about, list what feeds it (rows ending at it) and what it drives (rows starting at it). Next to each identifier, add its noted numbers, start states and if-then statements.\nAnswer by reading along the path from cause to effect in the tables. Use only rows whose identifiers match exactly. Never merge two components that have similar names but different prefixes. Copy numbers and units exactly, and show any arithmetic in one line. Give the final answer in one short line. Say 'not stated' only if Step C is empty for the asked item, or the notes explicitly mark it as unknown.",
+    "rationale": "With 8 systems, wrong answers mostly come from confusing components or losing a chain partway, so exact identifiers and small edge and in/out tables keep a long multi-hop lookup grounded.",
+    "length": 1258
+   },
+   "s4a3": {
+    "slot": 4,
+    "archetype": 3,
+    "value": "1. Draft: write a one-line answer using the bullets that seem relevant.\n2. Verify each claim: for every number, state, cause and time in the draft, quote the exact notes bullet that supports it. Delete or fix any claim you cannot quote.\n3. Scope check: confirm that every quoted bullet is about the same component and the same system the question asks about, not a look-alike from another description.\n4. Qualifier check: re-read the question for a time point, order, start state or if-clause. Confirm that the quoted bullets hold under that qualifier. Where a bullet gives a value for a different time or state, find the correct one.\n5. Arithmetic check: redo any calculation step by step, check that the units match, and compare the result with the numbers in the notes for plausibility.\n6. Completeness check: if the question asks for several items, such as all causes or every affected component, scan the notes once more for bullets you missed.\n7. Unknown check: answer 'unknown' only if a bullet marks the item as unknown, uncertain or unmeasured, or if no bullet relates to it. If related bullets exist but do not settle it, give the answer they best support and add 'per notes'.\nOutput the final verified answer in one short line, with no working shown after it.",
+    "rationale": "Quoting a supporting bullet for each claim and checking scope, qualifiers and arithmetic catches the wrong answers that cause most lost points, and a narrow rule for 'unknown' avoids over-refusing.",
+    "length": 1270
+   },
+   "s4a4": {
+    "slot": 4,
+    "archetype": 4,
+    "value": "Before answering, decide which one of the described systems the question is about, using its distinctive component names or prefix. Use only bullets from that system. Never take a number, state or cause from another system's component, even if it has the same or a similar name. Then answer directly and briefly, copying numbers and units exactly from those bullets.",
+    "rationale": "This makes one surgical change aimed at k = 4 and k = 8, where scores drop most: restricting answers to the right system stops the model from borrowing facts from a look-alike component in another system.",
+    "length": 366
+   }
+  },
+  "cube": {
+   "0|0|0": ""
+  },
+  "best_id": "gd6f99b53eb9"
+ },
+ "needs_approval": false,
+ "hash": "c3521f813108083d"
+}

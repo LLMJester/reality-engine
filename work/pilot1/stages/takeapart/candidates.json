@@ -1,0 +1,85 @@
+{
+ "step": "takeapart",
+ "alts": {
+  "layout": [
+   {
+    "value": {
+     "core_params": {
+      "headers": [
+       "PARTS & LINKS",
+       "QUANTITIES",
+       "CAUSES & RULES",
+       "TIMING",
+       "UNKNOWNS"
+      ],
+      "tags": false,
+      "granularity": "fine"
+     }
+    },
+    "factor": "A",
+    "rationale": "Opus"
+   }
+  ],
+  "rules": [
+   {
+    "value": {
+     "guidance_text": "Write each fact as one short bullet: 'name: value' (e.g. 'T1.level: 40% at start') or 'a -> b: relation' (e.g. 'P1 -> T1: fills'). Use the exact name from the text for a component every time; if several systems are described, prefix each name with its system (e.g. 'Water.P1'). Copy every number with its unit and condition exactly. Write each cause or condition as 'if X then Y'. When the text says something is unknown, unmeasured or uncertain, write 'name: unknown' instead of guessing. One fact per bullet, no prose, no repeats. Put each fact under the section it fits best."
+    },
+    "factor": "B",
+    "rationale": "Opus"
+   }
+  ],
+  "answering": [
+   {
+    "value": {
+     "answering_text": "1. Pick out the exact component names, numbers and times in the question.\n2. Search the notes for every bullet that mentions those names, including any system prefix.\n3. Follow the 'a -> b' relations and 'if X then Y' conditions that connect them, one step at a time, and write the chain down.\n4. Use numbers and units exactly as noted. Do any arithmetic explicitly and check that the units match.\n5. Check any time, order or start-state conditions that apply.\n6. If the notes mark the asked item as unknown, or no bullet covers it, answer that it is unknown or not stated. Do not guess.\n7. Otherwise give a short, direct answer. Always answer, using the closest relevant fact if there is no exact match."
+    },
+    "factor": "C",
+    "rationale": "Opus"
+   }
+  ]
+ },
+ "extras": {
+  "plus": {
+   "A": {
+    "core_params": {
+     "headers": [
+      "PARTS & LINKS",
+      "QUANTITIES",
+      "CAUSES & RULES",
+      "TIMING",
+      "UNKNOWNS"
+     ],
+     "tags": false,
+     "granularity": "fine"
+    }
+   },
+   "B": {
+    "guidance_text": "Write each fact as one short bullet: 'name: value' (e.g. 'T1.level: 40% at start') or 'a -> b: relation' (e.g. 'P1 -> T1: fills'). Use the exact name from the text for a component every time; if several systems are described, prefix each name with its system (e.g. 'Water.P1'). Copy every number with its unit and condition exactly. Write each cause or condition as 'if X then Y'. When the text says something is unknown, unmeasured or uncertain, write 'name: unknown' instead of guessing. One fact per bullet, no prose, no repeats. Put each fact under the section it fits best."
+   },
+   "C": {
+    "answering_text": "1. Pick out the exact component names, numbers and times in the question.\n2. Search the notes for every bullet that mentions those names, including any system prefix.\n3. Follow the 'a -> b' relations and 'if X then Y' conditions that connect them, one step at a time, and write the chain down.\n4. Use numbers and units exactly as noted. Do any arithmetic explicitly and check that the units match.\n5. Check any time, order or start-state conditions that apply.\n6. If the notes mark the asked item as unknown, or no bullet covers it, answer that it is unknown or not stated. Do not guess.\n7. Otherwise give a short, direct answer. Always answer, using the closest relevant fact if there is no exact match."
+   },
+   "D": {
+    "examples": [
+     "## THINGS\n- Water.P1: pump\n- Water.T1: tank, 500 L\n- Water.V1: drain valve on T1\n## VALUES\n- Water.T1.level: 40% at start\n- Water.P1.flow: 20 L/min when on\n- Water.V1.flow: unknown (not stated)\n## RULES\n- if T1.level >= 90% then P1 stops\n- if V1 open and P1 off then T1.level falls\n## LINKS\n- Water.P1 -> Water.T1: fills\n- Water.T1 -> Water.V1: drains through\n## TIMING\n- Water.P1: starts at 08:00\n- Water.T1.level: checked every 5 min"
+    ],
+    "examples_new_layout": [
+     "## PARTS & LINKS\n- Water.P1: pump\n- Water.T1: tank, 500 L\n- Water.V1: drain valve on T1\n- Water.P1 -> Water.T1: fills\n- Water.T1 -> Water.V1: drains through\n## QUANTITIES\n- Water.T1.level: 40% at start\n- Water.P1.flow: 20 L/min when on\n## CAUSES & RULES\n- if T1.level >= 90% then P1 stops\n- if V1 open and P1 off then T1.level falls\n## TIMING\n- Water.P1: starts at 08:00\n- Water.T1.level: checked every 5 min\n## UNKNOWNS\n- Water.V1.flow: unknown (not stated)"
+    ]
+   },
+   "rationale": {
+    "A": "This layout adds a dedicated place for what is unknown, which the old layout lacked, and it keeps parts beside their connections and causes beside rules, so large systems stay easy to navigate with the same light syntax.",
+    "B": "Exact, system-prefixed names, exact units, an 'if X then Y' form for causes and an explicit 'unknown' marker should cut the wrong answers that dominate the losses, especially at k=8, without adding syntax that the checker could reject.",
+    "C": "A short name-driven lookup that follows relations, does explicit arithmetic, answers 'unknown' only when the notes support it, and otherwise always answers should fix both reasoning errors and unanswered questions under either layout.",
+    "D": "One compact example shows the prefixing, unit, condition and unknown conventions in practice, which a small model copies more reliably than prose rules."
+   },
+   "E": {
+    "max_turns": 24
+   },
+   "winner": "gd6f99b53eb9",
+   "hash": "080017eba40f8eec"
+  }
+ },
+ "hash": "058acd8d2d9487fb"
+}

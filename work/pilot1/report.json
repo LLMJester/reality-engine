@@ -1,0 +1,84 @@
+{
+ "plan": "pilot1",
+ "pack": "describing-reality",
+ "final_design": "take apart D01",
+ "final_id": "gd6f99b53eb9",
+ "sealed_set": "sealed",
+ "n_sealed": 16,
+ "clusters": 4,
+ "right": {
+  "mean": 0.6797,
+  "range": [
+   0.526,
+   0.8021
+  ],
+  "by_level": {
+   "k=1": 0.8333,
+   "k=2": 0.75,
+   "k=4": 0.6458,
+   "k=8": 0.4896
+  }
+ },
+ "reliability": {
+  "finished_cleanly": 1.0,
+  "n": 16,
+  "weakest_level": "k=8",
+  "pack": null
+ },
+ "why_it_fails": {
+  "wrong answers": 12,
+  "notes failed their check": 1
+ },
+ "verdict": [
+  {
+   "test": "1_vs_control",
+   "rival": "A0P",
+   "lead": 0.1797,
+   "range": [
+    0.0686,
+    0.2908
+   ],
+   "counted": true
+  },
+  {
+   "test": "2_vs_runner_up",
+   "rival": "SEC_FLOW",
+   "lead": 0.2083,
+   "range": [
+    -0.1556,
+    0.5722
+   ],
+   "counted": false
+  }
+ ],
+ "effort": {
+  "founders": 4,
+  "new_versions": 15,
+  "designs_built": 23,
+  "runs": 672,
+  "stages": 4,
+  "changes_kept": 0
+ },
+ "headroom": {
+  "closest_rival": {
+   "test": "1_vs_control",
+   "rival": "A0P",
+   "lead": 0.1797,
+   "range": [
+    0.0686,
+    0.2908
+   ],
+   "counted": true
+  },
+  "best_unproven": {
+   "where": "take apart",
+   "slot": "rules",
+   "effect": 0.0358,
+   "range": [
+    -0.0263,
+    0.0979
+   ],
+   "verdict": "not kept"
+  }
+ }
+}

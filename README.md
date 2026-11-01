@@ -138,7 +138,22 @@ item, and the texts the designer wrote then, so the engine re-makes every decisi
 
 ### The live pilot
 
-<!--PILOT-->
+`plans/pilot.json` (pilot1, 31 October 2026) ran every step for real on **fresh** systems that no earlier run had
+used (`plans/pilot_items.json`). GPT-6 Luna did the tasks through Codex, and Claude Opus wrote the new versions from
+the engine's brief. It made 672 runs in 38 minutes, unattended (approval "auto").
+
+| Step | What happened |
+|---|---|
+| Compare: 4 founders × 32 cases (8 systems) | FACTS 72% [67–78], SEC_FLOW 64%, SEC_A1 51%, A0P (plain prose) 51% |
+| Take apart: Opus wrote new layout, rules and answering; 8 designs × 32 | No part earned its place; FACTS kept |
+| Round 1: Opus wrote 4 versions of each part; screen 13 × 16 | One version (answering 2, +0.034) cleared the bar |
+| Round 1: confirmation 2 × 16 | It did not beat FACTS; the rounds stop |
+| Final check on 16 sealed cases (4 systems) | FACTS 68% [53–80]; vs A0P **+0.18 [0.07, 0.29], counted**; vs SEC_FLOW +0.21 [−0.16, 0.57], not counted |
+
+The pilot was only meant to show that the engine works end to end, and it does. Its pattern matches run 5: FACTS
+wins, it beats plain prose on sealed cases, and nothing the designer tried improved it. But it is far too small to be
+a result: with 4 sealed systems, even a 21-point lead over SEC_FLOW can't be told apart from chance. Its trust
+report, analysis and the designer's frozen versions are in `work/pilot1/`.
 
 ## Relation to the earlier repositories
 

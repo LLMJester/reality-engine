@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Trust report</title>
+<style>
+:root{--bg:#fbfbf9;--fg:#1d1d1b;--muted:#5d5d58;--line:#dcdcd5;--card:#fff;--good:#2f6b3f}
+@media (prefers-color-scheme:dark){:root{--bg:#151514;--fg:#ececea;--muted:#a5a59f;--line:#34342f;--card:#1e1e1c;--good:#7cc08c}}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;margin:0;padding:24px 16px}
+main{max-width:1040px;margin:0 auto} h1{font-size:24px;margin:0 0 4px} .muted{color:var(--muted)}
+.glance{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+@media (max-width:760px){.glance{grid-template-columns:1fr}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.tile h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.tile b{font-size:28px;color:var(--good);font-family:Georgia,serif} .tile p{margin:6px 0 0;color:var(--muted)}
+table{border-collapse:collapse;width:100%;background:var(--card)} td,th{border-bottom:1px solid var(--line);
+padding:6px 8px;text-align:left} .wrap{overflow-x:auto}
+</style></head><body><main>
+<h1>Trust report: pilot1</h1>
+<p class="muted">Pack describing-reality · final design take apart D01 (gd6f99b53eb9) · sealed set
+sealed: 16 cases in 4 clusters, opened once</p>
+<div class="glance"><div class="tile"><h2>How often it&#x27;s right</h2><b>68%</b><p>range 53–80% on 16 sealed cases; by level k=1: 83%, k=2: 75%, k=4: 65%, k=8: 49%</p></div>
+<div class="tile"><h2>Reliability</h2><b>100%</b><p>of its sealed runs finished without a failure; weakest level k=8</p></div>
+<div class="tile"><h2>Why it fails</h2><b>wrong answers</b><p>wrong answers 12, notes failed their check 1</p></div>
+<div class="tile"><h2>Verdict</h2><b>1 of 2</b><p>leads counted: vs A0P +18.0 pts (counted); vs SEC_FLOW +20.8 pts (not shown)</p></div>
+<div class="tile"><h2>How hard we looked</h2><b>672 runs</b><p>4 founders, 15 new versions, 23 designs, 4 stages, 0 changes kept</p></div>
+<div class="tile"><h2>Headroom</h2><b>+18.0 pts</b><p>closest rival A0P; best unproven change rules +3.6 pts (take apart)</p></div></div>
+<h2>The final check, in the locked order</h2>
+<p class="muted">Each lead counts only if its whole 95% range is above zero and every earlier one counted.</p>
+<div class="wrap"><table><tr><th>Test</th><th>Rival</th><th>Lead</th><th>95% range</th><th></th></tr>
+<tr><td>1_vs_control</td><td>A0P</td><td>+18.0 pts</td><td>7–29 pts</td><td>counted</td></tr>
+<tr><td>2_vs_runner_up</td><td>SEC_FLOW</td><td>+20.8 pts</td><td>-16–57 pts</td><td>not counted</td></tr></table></div>
+</main></body></html>

@@ -1,0 +1,35 @@
+{
+ "evidence": {
+  "n_items": 32,
+  "mean": 0.724,
+  "by_level": {
+   "k=1": {
+    "mean": 0.875,
+    "n": 8
+   },
+   "k=2": {
+    "mean": 0.7292,
+    "n": 8
+   },
+   "k=4": {
+    "mean": 0.75,
+    "n": 8
+   },
+   "k=8": {
+    "mean": 0.5417,
+    "n": 8
+   }
+  },
+  "failure_types": {
+   "wrong answers": 18,
+   "notes failed their check": 4,
+   "questions left unanswered": 1
+  },
+  "pack": {
+   "Notes that passed their checker": "88%",
+   "Mean output tokens per case": 5038
+  },
+  "history": []
+ },
+ "text": "WHAT EARLIER STAGES MEASURED (scores only; no test case is shown)\nCurrent best: mean score 0.724 on 32 test cases.\nBy difficulty level: k=1: 0.875 (n=8), k=2: 0.7292 (n=8), k=4: 0.75 (n=8), k=8: 0.5417 (n=8)\nHow runs lost points: wrong answers 18, notes failed their check 4, questions left unanswered 1\nNotes that passed their checker: 88%\nMean output tokens per case: 5038"
+}
