@@ -1,0 +1,9 @@
+SYSTEM DESCRIPTION
+==================
+{context}
+
+QUESTION
+========
+{question}
+
+Write an R++ Core world model of this system that you can use to answer the question. Model the system's mechanisms, include the scenarios and claims that answer the question, and list them in "answer".

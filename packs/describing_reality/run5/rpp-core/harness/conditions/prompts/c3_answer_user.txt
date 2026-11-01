@@ -1,0 +1,13 @@
+SYSTEM DESCRIPTION
+==================
+{context}
+
+QUESTION
+========
+{question}
+
+Earlier you wrote this world model of the system in R++ Core (a JSON world-model language: sorts, statics, time-varying fluents, laws that change them over discrete steps, scenarios, and claims with status observed/asserted/inferred/assumed):
+
+{model}
+
+Check the world model against the description yourself, in prose: is anything missing, wrong, or unjustified, and do its conclusions actually follow? Correct whatever is wrong in your reasoning, then give your FINAL ANSWER to the question.

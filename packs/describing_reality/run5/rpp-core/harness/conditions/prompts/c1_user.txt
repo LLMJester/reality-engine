@@ -1,0 +1,9 @@
+SYSTEM DESCRIPTION
+==================
+{context}
+
+QUESTION
+========
+{question}
+
+Think it through step by step, then give your FINAL ANSWER.

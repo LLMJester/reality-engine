@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Reality Engine Dashboard</title>
+<style>
+:root {
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+  --g1: #2a78d6; --g2: #eb6834; --g3: #1baf7a; --good: #0ca30c; --warn: #fab219; --crit: #d03b3b;
+  --goodtext: #006300; --band: rgba(42,120,214,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --g1: #3987e5; --g2: #d95926; --g3: #199e70; --goodtext: #0ca30c; --band: rgba(57,135,229,0.12);
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+  --g1: #3987e5; --g2: #d95926; --g3: #199e70; --goodtext: #0ca30c; --band: rgba(57,135,229,0.12);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { padding: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+h1 { font-size: 24px; margin: 0; letter-spacing: -0.2px; }
+.tagline { color: var(--ink2); font-size: 14px; font-weight: 600; margin: 2px 0 2px; }
+h2 { font-size: 15px; margin: 0 0 4px; }
+h3 { font-size: 14px; margin: 16px 0 4px; }
+.sub { color: var(--ink2); font-size: 13px; margin: 0 0 10px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--ring); background: var(--surface); font-size: 13px; }
+select.chip, button.chip { color: var(--ink); font: inherit; font-size: 13px; }
+button.chip { cursor: pointer; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+nav { display: flex; gap: 4px; padding: 0 16px; border-bottom: 1px solid var(--grid); overflow-x: auto; }
+nav button { font: inherit; background: none; border: 0; padding: 8px 12px; color: var(--ink2); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+nav button.on { color: var(--ink); border-bottom-color: var(--ink); }
+main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+.panel { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; }
+.kpi .v { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--ink2); font-size: 12px; }
+.kpi .pc { display: block; line-height: 1.25; }
+.kpi .pc small { font-size: 12px; font-weight: 400; color: var(--ink2); }
+.bar { height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.bar i { display: block; height: 100%; background: var(--ink2); }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; }
+.step { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--ring); color: var(--muted); font-size: 13px; }
+.step.done { color: var(--ink2); }
+.step.now { color: var(--ink); border-color: var(--ink); font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--ink2); }
+.tile.now { border-color: var(--ink); }
+.tile.wait { opacity: 0.5; }
+nav button.later { color: var(--muted); opacity: 0.6; }
+.tile.link { cursor: pointer; }
+.tile.link:hover { border-color: var(--g1); }
+.tile .h { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+.tile .h .mk { margin-right: 4px; }
+.tile .n { font-size: 18px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.tile .bar i.done { background: var(--good); }
+.tile .bar i.now { background: var(--g1); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--ink2); font-weight: 600; }
+td.n, th.n { text-align: right; }
+.scroll { overflow-x: auto; }
+.mute { color: var(--muted); }
+.code { color: var(--muted); font-size: 11px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink2); margin: 4px 0 8px; }
+.toggle { font: inherit; font-size: 12px; background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 2px 8px; color: var(--ink2); cursor: pointer; float: right; }
+svg text { fill: var(--ink2); font-size: 12px; }
+svg .lab { fill: var(--ink); }
+#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 8px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: none; max-width: 280px; z-index: 9; }
+.how { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.how .plain { border-left: 3px solid var(--g1); padding-left: 10px; }
+.how .tech { border-left: 3px solid var(--axis); padding-left: 10px; color: var(--ink2); }
+.how h4 { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.how p, .how li { margin: 0 0 6px; }
+.status-good { color: var(--goodtext); }
+.glance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+@media (max-width: 760px) { .glance { grid-template-columns: 1fr; } }
+.glance .card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 14px; color: var(--ink2); font-size: 13px; }
+.glance h4 { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+.glance .big { font-size: 40px; font-weight: 600; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.glance p { margin: 4px 0 0; }
+.glance .stack { display: flex; gap: 2px; height: 14px; margin: 10px 0 8px; }
+.glance .stack i { display: block; height: 100%; }
+.glance .stack i:first-child { border-radius: 4px 0 0 4px; }
+.glance .stack i:last-child { border-radius: 0 4px 4px 0; }
+.glance .leg { display: grid; grid-template-columns: 10px 1fr auto; gap: 3px 8px; align-items: center; }
+.glance .leg i { width: 10px; height: 10px; border-radius: 2px; }
+code { font-size: 12px; }
+@media (max-width: 760px) { .how { grid-template-columns: 1fr; } main, header { padding: 12px 16px; } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>The Reality Engine</h1>
+    <div class="tagline">Describing reality for a small AI</div>
+    <div class="sub" id="sub">loading...</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <span class="chip" id="statusChip"><span class="dot" id="statusDot"></span><span id="statusText">-</span></span>
+    <button id="themeBtn" class="chip" type="button" title="switch between automatic, light and dark">Theme: auto</button>
+    <select id="modeSel" class="chip" title="which run to show" hidden><option value="real">experiment</option><option value="mini">mini run</option><option value="pilot">format pilot</option></select>
+  </div>
+</header>
+<nav id="tabs">
+  <button data-tab="progress" class="on">Progress</button>
+  <button data-tab="stage1">Stage 1</button>
+  <button data-tab="stage2">Stage 2</button>
+  <button data-tab="stage3" hidden>Stage 3</button>
+  <button data-tab="stage4" hidden>Stage 4</button>
+  <button data-tab="stage5" hidden>Stage 5</button>
+  <button data-tab="final">Final check</button>
+  <button data-tab="trust">Trust report</button>
+  <button data-tab="how">How it works</button>
+</nav>
+<main>
+  <section id="tab-progress">
+    <div class="panel"><h2>Where we are</h2><div class="tiles" id="tiles"></div><p class="sub" id="waiting" style="margin-top:8px"></p></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="panel" style="margin-top:14px"><h2>Log</h2><div class="scroll" id="events"></div></div>
+  </section>
+
+  <section id="tab-stage1" hidden>
+    <div class="panel">
+      <button class="toggle" data-table="s1gen">table</button>
+      <h2>Founders on the generated items</h2>
+      <p class="sub" id="s1sub">Mean share of questions answered right, with its 95% range. Shaded: could still be the best. Ranges narrow as items arrive.</p>
+      <div class="legend" id="s1legend"></div>
+      <div id="s1gen"></div>
+    </div>
+    <div class="panel">
+      <button class="toggle" data-table="s1hand">table</button>
+      <h2>Founders on the hand-written items</h2>
+      <p class="sub">The same founders on realistic messy documents, graded by the AI judge. Reported separately; never used to choose.</p>
+      <div id="s1hand"></div>
+      <p class="sub" id="s1agree"></p>
+    </div>
+    <div class="panel"><h2>By system size</h2><p class="sub">Mean by k (1 = one system; 8 = eight systems mixed together in one text).</p><div class="scroll" id="s1k"></div></div>
+    <div class="panel"><h2>Leads over the control (A0P, plain prose)</h2><p class="sub">Paired lead on the same items, 95% range, Holm-corrected verdict.</p><div class="scroll" id="s1lead"></div></div>
+    <div class="panel"><h2>Where the founders came from</h2><p class="sub">No AI wrote the founders during this run: all 15 were fixed, reviewed and approved by the human before run 5 started (V3-042), so stage 1 has no brief. Recipes in <code>v3/genome/seeds/</code>.</p><div class="scroll" id="s1origin"></div></div>
+    <div class="panel" id="ownPanel" hidden><h2>What form Luna chose (OWN)</h2><p class="sub">Detected by code from OWN's notes, by system size.</p><div class="scroll" id="own"></div></div>
+  </section>
+
+  <section id="tab-stage2" hidden>
+    <div class="panel"><h2>The five parts</h2>
+      <p class="sub">Stage 2 takes the stage 1 winner apart into five parts. Each part has two versions: the winner's own ("-") and one new version ("+") written by Opus from a short summary of the winner's stage 1 results on the generated items (never the questions, the hand-written items or the scores by problem family). All 32 mixes are tested, so we learn what each part does on its own.</p>
+      <table>
+        <tr><th>Part</th><th>What it is</th><th>The new version ("+")</th></tr>
+        <tr><td><b>A</b> notes layout</td><td>How the notes are organised: their sections, keys or columns.</td><td>A different organisation of the same content.</td></tr>
+        <tr><td><b>B</b> fact writing</td><td>The rules for writing each fact down.</td><td>A different set of writing rules.</td></tr>
+        <tr><td><b>C</b> answering</td><td>How Luna answers a question from its notes.</td><td>A step-by-step answering procedure.</td></tr>
+        <tr><td><b>D</b> worked example</td><td>Whether the recipe shows an example of good notes.</td><td>One short example (or none, if the winner had one).</td></tr>
+        <tr><td><b>E</b> thinking budget</td><td>How many tool calls (saves and reads of its notes) Luna may make while writing its notes; the limit is shown to Luna.</td><td>Double the winner's budget (half, if double passes the maximum). Plain-prose notes also get one revision pass.</td></tr>
+      </table>
+      <p class="sub" id="stage2When" style="margin-top:8px"></p>
+    </div>
+    <div class="panel"><h2>Stage 2 prep: the five new parts</h2><p class="sub" id="plusSub">Written by Opus after stage 1, frozen, and approved by the human before stage 2.</p><div id="plus"></div></div>
+    <div class="panel">
+      <button class="toggle" data-table="s2eff">table</button>
+      <h2>What each part does</h2>
+      <p class="sub">Effect = mean of the 16 designs with the new version minus the 16 without. Dots right of zero help. Marked: the pre-registered tests.</p>
+      <div id="s2eff"></div>
+    </div>
+    <div class="panel">
+      <h2>Interaction terms (synergy / antagonism)</h2>
+      <p class="sub">How much two parts' effects depend on each other. A positive term can mean two harmful parts hurt less together, not that the pair helps: so each row also shows the design with just those two new parts, its score and its difference from design 1 (the winner unchanged).</p>
+      <div class="scroll" id="s2pairs"></div>
+    </div>
+    <div class="panel"><h2>The 32 designs</h2><p class="sub" id="s2sub"></p><div class="scroll" id="s2table"></div></div>
+    <div class="panel"><details data-key="s2brief"><summary style="cursor:pointer"><b>What Opus was given</b> <span class="mute">(the firewalled stage 1 evidence it wrote the five new parts from: generated items only; never any question, item, answer key, hand-written result or score by problem family)</span></summary><pre id="s2brief" style="white-space:pre-wrap;margin:6px 0 0;font-size:12px"></pre></details></div>
+  </section>
+
+  <section id="tab-stage3" hidden><div id="stage3"></div></section>
+  <section id="tab-stage4" hidden><div id="stage4"></div></section>
+  <section id="tab-stage5" hidden><div id="stage5"></div></section>
+
+  <section id="tab-final" hidden>
+    <div class="panel"><h2>Final check</h2><div id="final"></div></div>
+  </section>
+
+  <section id="tab-trust" hidden>
+    <div class="panel"><h2>Trust report</h2><p class="sub" id="trustSub"></p></div>
+    <div class="glance" id="trustGlance"></div>
+    <div class="panel"><h2>1. How often it gets it right</h2><p class="sub">Share of each answer judged correct (0 to 1), with its 95% range.</p><div id="trustRight"></div></div>
+    <div class="panel"><h2>2. How reliable it is</h2><p class="sub">Where it holds up and where it slips: by system size, and how often its notes pass their own check.</p><div id="trustReliable"></div></div>
+    <div class="panel"><h2>3. Why it fails</h2><p class="sub">The notes checker's reasons for broken notes (stage 1, generated items).</p><div id="trustWhy"></div></div>
+    <div class="panel"><h2>4. What to change</h2><p class="sub">From stage 2: what each new part does to the score. Only a 95% range wholly above 0 counts as "helps".</p><div id="trustChange"></div></div>
+    <div class="panel"><h2>5. Changes made: before and after</h2><p class="sub" id="trustBASub"></p><div id="trustBA"></div></div>
+  </section>
+
+  <section id="tab-how" hidden>
+    <div id="howBody"></div>
+    <div class="panel"><h2>Glossary</h2><input id="glossQ" type="search" placeholder="filter, e.g. holm, tau" style="font:inherit;padding:4px 8px;border:1px solid var(--ring);border-radius:6px;background:var(--surface);color:var(--ink);width:min(320px,100%);margin-bottom:8px"><div class="scroll" id="gloss"></div></div>
+  </section>
+</main>
+<div id="tip"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var D = null, mode = "", showTable = {};          // "" = whatever the server is set to show
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+  function f3(x) { return x == null ? "-" : (+x).toFixed(3); }
+  function pct(x) { return x == null ? "-" : Math.round(x) + "%"; }
+  function num(x) { return x == null ? "-" : Number(x).toLocaleString(); }
+  function pc(done, planned) { return planned ? (Math.min(100, 100 * (done || 0) / planned)).toFixed(1) + "%" : "-"; }
+  var GROUP_COL = {"notes only": "var(--g1)", "fixed calculator": "var(--g2)", "own code": "var(--g3)", "baseline": "var(--muted)"};
+  var NAMES = {A0P: "Plain prose (control)", SEC_A1: "Sections with sources", ONT_LOOSE: "Ontology", SEC_FLOW: "Purpose and flows",
+    G1C3: "Equations", A5: "Logic rules", FACTS: "Short facts", STATES: "State machine", SPEC: "Build specification",
+    A2: "Causal graph", A3: "Simulation code", G1C1: "Probability code", JSON: "JSON object", MARKDOWN: "Markdown tables",
+    OWN: "Luna's own choice", BLIND: "No notes (baseline)", FINAL: "Final design", WINNER_E2: "Winner with double budget"};
+  function nice(f) { return NAMES[f] ? NAMES[f] + " (" + f + ")" : f; }       // plain name, code kept for reference
+  function niceHtml(f) { return NAMES[f] ? esc(NAMES[f]) + ' <span class="code">(' + esc(f) + ')</span>' : esc(f); }
+  function groupOf(f) { var g = (D && D.groups) || {}; for (var k in g) if (g[k].indexOf(f) >= 0) return k; return "stage 2"; }
+
+  // ------------------------------------------------------------ tabs
+  document.querySelectorAll("#tabs button").forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll("#tabs button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      document.querySelectorAll("main > section").forEach(function (s) { s.hidden = s.id !== "tab-" + b.dataset.tab; });
+      try { localStorage.setItem("run5tab", b.dataset.tab); } catch (e) {}
+    };
+  });
+  (function () {
+    var t = (location.hash || "").slice(1);
+    try { t = t || localStorage.getItem("run5tab"); } catch (e) {}
+    var b = t && document.querySelector('#tabs button[data-tab="' + t + '"]');
+    if (b) b.click();
+  })();
+  document.addEventListener("click", function (e) {     // chart / table toggles, including the ones the stage tabs draw
+    var b = e.target.closest ? e.target.closest(".toggle") : null;
+    if (!b) return;
+    showTable[b.dataset.table] = !showTable[b.dataset.table];
+    document.querySelectorAll('.toggle[data-table="' + b.dataset.table + '"]').forEach(function (x) { x.textContent = showTable[b.dataset.table] ? "chart" : "table"; });
+    render();
+  });
+  $("modeSel").onchange = function () { mode = this.value; load(); };
+
+  // ------------------------------------------------------------ theme: auto (follows the system), light or dark
+  var THEMES = ["auto", "light", "dark"];
+  function setTheme(t) {
+    if (t === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    $("themeBtn").textContent = "Theme: " + t;
+    try { localStorage.setItem("run5theme", t); } catch (e) {}
+  }
+  (function () {                                  // ?theme=light|dark|auto in the address wins, then the saved choice
+    var t = new URLSearchParams(location.search).get("theme");
+    if (THEMES.indexOf(t) < 0) { t = "auto"; try { t = localStorage.getItem("run5theme") || "auto"; } catch (e) {} }
+    setTheme(THEMES.indexOf(t) >= 0 ? t : "auto");
+  })();
+  $("themeBtn").onclick = function () {
+    var cur = document.documentElement.getAttribute("data-theme") || "auto";
+    setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]);
+  };
+
+  // ------------------------------------------------------------ tooltip
+  var tip = $("tip");
+  document.addEventListener("mousemove", function (e) {
+    var t = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if (!t) { tip.style.display = "none"; return; }
+    tip.innerHTML = t.getAttribute("data-tip"); tip.style.display = "block";
+    var x = e.clientX + 14, y = e.clientY + 14;
+    if (x + 290 > window.innerWidth) x = e.clientX - 290;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  });
+
+  // ------------------------------------------------------------ forest plot: one row per entity, dot + 95% range
+  function forest(rows, opts) {
+    // rows: [{label, mean, range:[lo,hi], color, band, mark, tip}]
+    opts = opts || {};
+    if (!rows.length) return '<p class="mute">No data yet.</p>';
+    var longest = 0;
+    rows.forEach(function (r) { longest = Math.max(longest, String(r.label).length + (r.code ? r.code.length + 3 : 0)); });
+    if (opts.yTitle) longest = Math.max(longest, opts.yTitle.length - 6);
+    var W = 760, rowH = 24, padL = Math.min(300, 24 + Math.round(longest * 6.6)), padR = 64, top = opts.yTitle ? 26 : 8, bottom = opts.xTitle ? 46 : 28, H = top + rows.length * rowH + bottom;
+    var lo = Infinity, hi = -Infinity;
+    rows.forEach(function (r) { var a = r.range ? r.range[0] : r.mean, b = r.range ? r.range[1] : r.mean; lo = Math.min(lo, a); hi = Math.max(hi, b); });
+    if (opts.zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+    if (opts.ref) { lo = Math.min(lo, opts.ref.value); hi = Math.max(hi, opts.ref.value); }
+    var span = Math.max(hi - lo, 0.02); lo -= span * 0.08; hi += span * 0.08;
+    var X = function (v) { return padL + (v - lo) / (hi - lo) * (W - padL - padR); };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="display:block;max-width:900px;margin:0 auto" role="img" aria-label="' + esc(opts.aria || "dot and range chart") + '">';
+    var ticks = niceTicks(lo, hi, 5);
+    ticks.forEach(function (t) { s += '<line x1="' + X(t) + '" x2="' + X(t) + '" y1="' + top + '" y2="' + (H - bottom) + '" stroke="var(--grid)" stroke-width="1"/><text x="' + X(t) + '" y="' + (H - bottom + 18) + '" text-anchor="middle">' + fmtTick(t) + '</text>'; });
+    if (opts.xTitle) s += '<text x="' + ((padL + W - padR) / 2) + '" y="' + (H - 6) + '" text-anchor="middle" fill="var(--muted)">' + esc(opts.xTitle) + '</text>';
+    if (opts.yTitle) s += '<text x="' + (padL - 10) + '" y="14" text-anchor="end" fill="var(--muted)">' + esc(opts.yTitle) + '</text>';
+    if (opts.yTitle) s += '<text x="' + (W - padR + 8) + '" y="14" fill="var(--muted)">' + esc(opts.valueTitle || "Average") + '</text>';
+    if (opts.zero) s += '<line x1="' + X(0) + '" x2="' + X(0) + '" y1="' + top + '" y2="' + (H - bottom) + '" stroke="var(--axis)" stroke-width="1.5"/>';
+    if (opts.ref) s += '<line x1="' + X(opts.ref.value) + '" x2="' + X(opts.ref.value) + '" y1="' + top + '" y2="' + (H - bottom) + '" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4 3"/>' +
+      '<text x="' + (X(opts.ref.value) + 4) + '" y="' + (top + 10) + '" fill="var(--goodtext)">' + esc(opts.ref.label || "") + ' +' + fmtTick(opts.ref.value) + '</text>';
+    rows.forEach(function (r, i) {
+      var y = top + i * rowH + rowH / 2;
+      if (r.band) s += '<rect x="' + (padL - 4) + '" y="' + (y - rowH / 2 + 1) + '" width="' + (W - padL - padR + 8) + '" height="' + (rowH - 2) + '" fill="var(--band)" rx="4"/>';
+      s += '<text class="lab" x="' + (padL - 10) + '" y="' + (y + 4) + '" text-anchor="end"' + (r.mark ? ' font-weight="600"' : '') + '>' + esc(r.label) + (r.code ? ' <tspan font-size="10" fill="var(--muted)">(' + esc(r.code) + ')</tspan>' : '') + '</text>';
+      var t = r.tip || (esc(r.label) + ": " + f3(r.mean) + (r.range ? " [" + f3(r.range[0]) + ", " + f3(r.range[1]) + "]" : ""));
+      s += '<g data-tip="' + esc(t) + '">';
+      s += '<rect x="' + padL + '" y="' + (y - rowH / 2) + '" width="' + (W - padL - padR) + '" height="' + rowH + '" fill="transparent"/>';
+      if (r.range) s += '<line x1="' + X(r.range[0]) + '" x2="' + X(r.range[1]) + '" y1="' + y + '" y2="' + y + '" stroke="' + r.color + '" stroke-width="2" stroke-linecap="round"/>';
+      s += '<circle cx="' + X(r.mean) + '" cy="' + y + '" r="5" fill="' + r.color + '" stroke="var(--surface)" stroke-width="2"/>';
+      s += '</g><text x="' + (W - padR + 8) + '" y="' + (y + 4) + '">' + f3(r.mean) + '</text>';
+    });
+    return s + '</svg>';
+  }
+  function niceTicks(lo, hi, n) {
+    var step = Math.pow(10, Math.floor(Math.log10((hi - lo) / n))), err = (hi - lo) / n / step;
+    step *= err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1;
+    var out = []; for (var v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(6));
+    return out;
+  }
+  function fmtTick(t) { return Math.abs(t) < 1e-9 ? "0" : (Math.abs(t) < 0.1 ? t.toFixed(3) : t.toFixed(2)); }
+  function table(head, rows, numCols) {
+    numCols = numCols || [];
+    return '<table><tr>' + head.map(function (h, i) { return '<th' + (numCols.indexOf(i) >= 0 ? ' class="n"' : '') + '>' + esc(h) + '</th>'; }).join("") + '</tr>' +
+      rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return '<td' + (numCols.indexOf(i) >= 0 ? ' class="n"' : '') + '>' + c + '</td>'; }).join("") + '</tr>'; }).join("") + '</table>';
+  }
+
+  // ------------------------------------------------------------ data
+  function load() {
+    return fetch("status.json" + (mode ? "?mode=" + mode : ""), {cache: "no-store"}).then(function (r) { return r.json(); }).then(function (d) { D = d; render(); })
+      .catch(function (e) { $("sub").textContent = "cannot reach the dashboard server: " + e; });
+  }
+
+  function render() {
+    if (!D) return;
+    if (D.error) { $("sub").textContent = "feed error (see the server window)"; return; }
+    var p = D.progress || {};
+    $("sub").textContent = {real: "Live experiment", mini: "Mini run (end-to-end check; never in results)", pilot: "Format pilot (never in results)"}[D.mode] +
+      " · updated " + D.generated_at.replace("T", " ") + " · refreshes every second";
+    $("modeSel").value = D.mode;
+    $("modeSel").hidden = !D.switchable;          // the experiment's dashboard shows only the experiment
+    var state = D.stage === "not started" ? ["Not started", "var(--muted)"] : D.paused ? ["Paused", "var(--warn)"] : D.waiting_for ? ["Waiting for the human", "var(--warn)"] :
+      D.stage === "done" ? ["Complete", "var(--good)"] : D.stage === "not started" ? ["Not started", "var(--muted)"] : ["Running", "var(--good)"];
+    $("statusDot").style.background = state[1]; $("statusText").textContent = state[0];
+    renderProgress(p); renderStage1(); renderStage2(); renderStages(); renderFinal(); renderTrust(); renderHow();
+  }
+
+  function renderProgress(p) {
+    $("tiles").innerHTML = tilesHtml(p);
+    var tt = document.querySelector('.tile[data-go]');
+    if (tt) tt.onclick = function () { var b = document.querySelector('#tabs button[data-tab="' + tt.getAttribute("data-go") + '"]'); if (b) b.click(); };
+    $("waiting").innerHTML = D.stage === "not started" ? "Not started yet." : D.halt ? "<b>Halted on an infrastructure failure:</b> " + esc(D.halt) : D.paused ? "<b>Paused.</b> " + esc(D.pause_text) : D.waiting_for ? "<b>Waiting for:</b> " + esc(D.waiting_for) : "";
+    var u = D.usage || {}, j = D.judge || {};
+    var left = p.runs_per_hour && p.planned_total ? (Math.max(0, p.planned_total - (p.runs_done_total || 0)) / p.runs_per_hour).toFixed(1) + " h left" : "";
+    var k = [
+      ["Whole run", '<span class="pc">' + num(p.runs_done_total) + " / " + num(p.planned_total) + '</span><span class="pc"><small>' + pc(p.runs_done_total, p.planned_total) + (left ? " · " + left : "") + '</small></span>',
+        p.planned_total ? p.runs_done_total / p.planned_total : null, "Runs done over all stages. Time left = runs still to do at the current pace; the final check's count is an estimate until stage 2 picks the final design."],
+      ["Pace", p.runs_per_hour ? num(Math.round(p.runs_per_hour)) + " runs/hour" : "-", null],
+      ["Luna weekly allowance used", pct(u.luna_weekly_percent), u.luna_weekly_percent != null ? u.luna_weekly_percent / 100 : null],
+      ["Claude weekly allowance used", pct(u.claude_weekly_percent), u.claude_weekly_percent != null ? u.claude_weekly_percent / 100 : null],
+      ["Judge spend", '<span class="pc">$' + (j.usd != null ? j.usd.toFixed(2) : "-") + '</span><span class="pc"><small>' + num(j.calls) + ' grades</small></span>', null],
+      ["Runs scored 0", num(D.n_failed), null, (D.failed || []).length ?
+        "<b>Failures caused by the design (timeouts, forbidden tool calls) are retried twice, then scored 0.</b><br>" + D.failed.slice(-10).map(function (f) { return esc(nice(f.design)) + " × " + esc(f.item) + ": " + esc(String(f.error).slice(0, 80)); }).join("<br>") :
+        "Failures caused by the design are retried twice, then scored 0. Infrastructure failures halt the run instead."]];
+    $("kpis").innerHTML = k.map(function (x) { return '<div class="kpi"' + (x[3] ? ' data-tip="' + esc(x[3]) + '"' : '') + '><div class="l">' + x[0] + '</div><div class="v">' + x[1] + '</div>' + (x[2] != null ? '<div class="bar"><i style="width:' + Math.min(100, x[2] * 100) + '%"></i></div>' : '') + '</div>'; }).join("");
+    $("events").innerHTML = (D.events || []).length ? table(["Time", "Event"], D.events.slice().reverse().map(function (e) { return [esc(e.t.replace("T", " ")), esc(e.msg)]; })) : '<p class="mute">No events yet.</p>';
+  }
+
+  function hm(t) { return t ? t.slice(5, 16).replace("T", " ").replace(/^(\d\d)-(\d\d)/, function (_, mo, d) { return +d + " " + ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+mo - 1]; }) : "-"; }
+  function tilesHtml(p) {
+    var T = D.tiles || {}, order = T.order || ["stage1", "plus", "stage2", "final2"], at = T.position != null ? T.position : order.indexOf(D.stage);
+    if (D.stage === "done") at = order.length;
+    if (D.mode === "pilot") order = ["stage1"];
+    function state(s) { if ((T[s] || {}).skipped) return "skipped"; var i = order.indexOf(s); return i < at ? "done" : i === at ? "now" : "wait"; }
+    function mk(st) { return st === "skipped" ? '<span class="mk" style="color:var(--muted)">–</span>' : st === "done" ? '<span class="mk status-good">✓</span>' : st === "now" ? '<span class="mk" style="color:var(--g1)">●</span>' : '<span class="mk" style="color:var(--muted)">○</span>'; }
+    function bar(d, pl, st) { return '<div class="bar"><i class="' + st + '" style="width:' + (pl ? Math.min(100, 100 * d / pl) : 0) + '%"></i></div>'; }
+    function tile(s, title, sub, lines) { var st = state(s); return '<div class="tile ' + (st === "now" ? "now" : st === "wait" || st === "skipped" ? "wait" : "") + '"><div class="h">' + mk(st) + title + (st === "now" ? ' <span style="font-weight:400;text-transform:none;color:' + (D.paused ? 'var(--warn)">paused' : 'var(--g1)">running') + '</span>' : "") + '</div><div>' + sub + '</div>' + lines.join("") + '</div>'; }
+    var out = [], a = T.stage1 || {}, b = T.plus || {}, c = T.stage2 || {}, tr = T.trust;
+    out.push(tile("stage1", "Stage 1", "Founders", ['<div class="n">' + num(a.done) + " / " + num(a.planned) + ' runs</div>', bar(a.done, a.planned, state("stage1")),
+      '<div>' + hm(a.first) + " – " + hm(a.last) + '</div>', a.winner ? '<div>Winner: <b>' + esc(a.winner) + "</b> " + f3(a.winner_mean) + '</div>' : ""]));
+    if (D.mode === "pilot") return out.join("");
+    var ps = state("plus");
+    out.push(tile("plus", "Stage 2 prep", "New parts", [ps === "wait" ? "<div>Opus writes five new parts; a person approves</div>" :
+      b.approved ? '<div class="n">Approved</div><div>' + (typeof b.approved === "string" ? hm(b.approved) : "") + '</div><div>parts ' + esc(b.hash || "") + '</div>' :
+      '<div class="n">Waiting</div><div>' + (b.hash ? "parts " + esc(b.hash) + " written " + hm(b.written) + "; waiting for approval" : "Opus is writing the parts") + '</div>']));
+    var s2s = state("stage2");
+    out.push(tile("stage2", "Stage 2", "Five parts, 32 designs", ['<div class="n">' + num(c.done) + " / " + num(c.planned) + ' runs</div>', bar(c.done, c.planned, s2s),
+      s2s === "wait" ? "<div>Starts after the approval</div>" : '<div>' + hm(c.first) + (s2s === "done" ? " – " + hm(c.last) : s2s === "now" && p.stage === "stage2" && p.eta_hours != null ? " · ~" + p.eta_hours + " h left" : "") + '</div>',
+      c.final_design ? '<div>Verdict: <b>' + esc(c.final_design) + (c.final_design === "D01" ? " (the winner unchanged)" : "") + '</b></div>' : c.fitted ? '<div>Fitted pick ' + esc(c.fitted) + '; verdict pending (V3-058)</div>' : ""]));
+    // stages 3 to N and the final check: generic tiles from the feed (V3-058)
+    order.slice(3).forEach(function (k) {
+      var x = T[k] || {}, s = state(k), lines = [];
+      if (s === "skipped") {
+        lines.push('<div class="n">Not needed</div><div>The stages stopped: no design beat the current best in stage ' + esc(D.stage_n || "") + '</div>');
+      } else if (/_write$/.test(k)) {
+        lines.push(s === "wait" ? "<div>Opus writes 4 versions of each of the 5 parts; a person approves</div>" :
+          x.approved ? '<div class="n">Approved</div><div>candidates ' + esc(x.hash || "") + '</div>' :
+          '<div class="n">' + (x.written ? "Waiting" : D.paused ? "Not started" : "Writing") + '</div><div>' + (x.written ? "candidates " + esc(x.hash || "") + " written; waiting for approval" : D.paused ? "Starts when the run is restarted" : "Opus is writing the candidates") + '</div>');
+      } else {
+        lines.push('<div class="n">' + num(x.done) + " / " + (x.estimate ? "~" : "") + (x.planned != null ? num(x.planned) : "?") + ' runs</div>', bar(x.done || 0, x.planned, s));
+        lines.push(s === "wait" ? "<div>" + (k === "final2" ? "Starts by itself after the last stage" : "Waits for the step before") + "</div>" :
+          '<div>' + hm(x.first) + (s === "done" ? " – " + hm(x.last) : s === "now" && p.eta_hours != null ? " · ~" + p.eta_hours + " h left" : "") + '</div>');
+        if (x.advancing) { var ad = Object.keys(x.advancing); lines.push("<div>" + (ad.length ? "Going on: " + ad.map(function (sl) { return esc(SLOTNAME[sl] || sl); }).join(", ") : "No part passed: the stages stop") + "</div>"); }
+        if (x.result) lines.push("<div>" + (x.result.replaces ? "New best: <b>" + esc(x.result.final_design) + "</b> (+" + f3(x.result.gain) + ")" : "The current best stays") + "</div>");
+        var vs = x.verdicts || {}, nv = Object.keys(vs).length;
+        if (nv) lines.push('<div>' + Object.keys(vs).filter(function (q) { return vs[q]; }).length + " of " + nv + " comparisons counted better</div>");
+      }
+      out.push(tile(k, x.title || k, x.sub || "", lines));
+    });
+    var tl = [];
+    if (!tr) tl.push("<div>" + (D.tiles && D.tiles.stage2 && D.tiles.stage2.fitted ? "Stage 2 verdict pending (V3-058); then builds up stage by stage" : "Builds up during stage 2") + "</div>");
+    else {
+      var lv = tr.levels || {}, kept = ["A", "B", "C", "D", "E"].filter(function (k) { return lv[k] > 0 || lv[k] === "+"; });
+      tl.push('<div>' + (D.stage === "done" ? "Final" : "Best so far") + ': <b>' + esc(tr.current_best && !/^stage 2 D01$/.test(tr.current_best) ? tr.current_best : nice(D.winner)) + '</b>' +
+        (tr.current_best && !/^stage 2/.test(tr.current_best) ? "" : kept.length ? " + new " + kept.map(function (k) { return PART[k]; }).join(", ") : " unchanged") + '</div>');
+      var src = tr.sealed || tr.stage2;
+      tl.push('<div class="n">' + f3(src.before) + " → " + f3(src.after) + '</div><div>' + (tr.sealed ? "fresh sealed questions" : "accuracy on " + num(tr.n) + " stage 2 questions") + '</div>');
+    }
+    tl.push('<div style="color:var(--g1)">Open the Trust report →</div>');
+    var trs = D.stage === "done" && tr && tr.sealed ? "done" : tr ? "now" : "wait";
+    out.push('<div class="tile link" data-go="trust"><div class="h">' + mk(trs) + 'Trust report' + (trs === "now" ? ' <span style="font-weight:400;text-transform:none;color:var(--g1)">provisional</span>' : "") + '</div>' + tl.join("") + '</div>');
+    return out.join("");
+  }
+
+  function founderRows(res) {
+    var ds = (res && res.designs) || {};
+    return Object.keys(ds).sort(function (a, b) { return ds[b].mean - ds[a].mean; }).map(function (f) {
+      var g = groupOf(f), x = ds[f];
+      return {label: NAMES[f] || f, code: NAMES[f] ? f : null, mean: x.mean, range: x.range, color: GROUP_COL[g] || "var(--ink2)", band: x.could_be_best, mark: f === "A0P",
+        tip: "<b>" + esc(nice(f)) + "</b> (" + esc(g) + ")<br>mean " + f3(x.mean) + " [" + f3(x.range[0]) + ", " + f3(x.range[1]) + "]<br>" + (x.could_be_best ? "could still be the best" : f3(x.behind_best) + " behind the best") + "<br>items done: " + ((res.done || {})[f] != null ? res.done[f] : "-")};
+    });
+  }
+  function founderTable(res) {
+    var ds = (res && res.designs) || {};
+    return table(["Founder", "Group", "Items", "Mean", "95% range", "Could be best"], Object.keys(ds).sort(function (a, b) { return ds[b].mean - ds[a].mean; }).map(function (f) {
+      var x = ds[f]; return [niceHtml(f), esc(groupOf(f)), (res.done || {})[f] != null ? res.done[f] : res.n_items, f3(x.mean), "[" + f3(x.range[0]) + ", " + f3(x.range[1]) + "]", x.could_be_best ? "yes" : "no"]; }), [2, 3]);
+  }
+  function renderStage1() {
+    var s1 = D.stage1 || {}, gen = s1.generated, hand = s1.hand;
+    $("s1legend").innerHTML = Object.keys(GROUP_COL).map(function (g) { return '<span><span class="dot" style="background:' + GROUP_COL[g] + '"></span> ' + g + '</span>'; }).join("") + '<span><span class="dot" style="background:var(--band);border:1px solid var(--g1)"></span> could still be the best</span>';
+    var an = (D.analysis || {}).stage1;
+    $("s1sub").innerHTML = "Mean share of questions answered right, with its 95% range, on the items every founder has done so far (" + (gen ? gen.n_items : 0) + " of " + (D.sizes || {}).generated + "). Shaded: could still be the best." +
+      (an ? " <b>Final: winner " + esc(nice(an.winner)) + ", runner-up " + esc(nice(an.runner_up)) + (an.tie_at_top ? " (tied at the top)" : "") + ".</b>" : "");
+    $("s1gen").innerHTML = gen && gen.designs ? (showTable.s1gen ? founderTable(gen) : forest(founderRows(gen), {aria: "founders on generated items", xTitle: "Score: share of questions answered right (0 = none, 1 = all). Dot = average, line = 95% range", yTitle: "Founder (best at top)"})) : '<p class="mute">No results yet.</p>';
+    $("s1hand").innerHTML = hand && hand.designs ? (showTable.s1hand ? founderTable(hand) : forest(founderRows(hand), {aria: "founders on hand-written items", xTitle: "Score: share of questions answered right (0 = none, 1 = all). Dot = average, line = 95% range", yTitle: "Founder (best at top)"})) : '<p class="mute">' + ((D.sizes || {}).hand ? "No results yet." : "Not part of this run.") + '</p>';
+    var ra = an && an.rank_agreement;
+    $("s1agree").innerHTML = ra ? "Rank agreement between the two item kinds (Spearman): <b>" + ra.spearman + "</b> [" + ra.range[0] + ", " + ra.range[1] + "]" : "";
+    var byk = s1.by_k || {}, ks = Object.keys(byk);
+    if (ks.length && gen && gen.designs) {
+      var fs = Object.keys(gen.designs).sort(function (a, b) { return gen.designs[b].mean - gen.designs[a].mean; });
+      $("s1k").innerHTML = table(["Founder"].concat(ks.map(function (k) { return "k = " + k; })), fs.map(function (f) { return [niceHtml(f)].concat(ks.map(function (k) { var x = byk[k][f]; return x ? '<span data-tip="' + esc(nice(f) + ", k = " + k + ": " + f3(x.mean) + " [" + f3(x.range[0]) + ", " + f3(x.range[1]) + "], " + x.n + " items") + '">' + f3(x.mean) + '</span>' : "-"; })); }), ks.map(function (_, i) { return i + 1; }));
+    } else $("s1k").innerHTML = '<p class="mute">No results yet.</p>';
+    var leads = gen && gen.leads_over_control;
+    $("s1lead").innerHTML = leads ? table(["Founder", "Lead", "95% range", "Holm p", "Verdict"], Object.keys(leads).sort(function (a, b) { return leads[b].lead - leads[a].lead; }).map(function (f) { var l = leads[f]; return [niceHtml(f), f3(l.lead), "[" + f3(l.range[0]) + ", " + f3(l.range[1]) + "]", l.p_holm, l.reject ? '<span class="status-good">✓ better</span>' : "not shown"]; }), [1, 3]) : '<p class="mute">No results yet.</p>';
+    var ORIGIN = [
+      ["A0P", "plain prose, no structure", "The control: from the earlier runs (run 1 onward)."],
+      ["SEC_A1", "sections with sources: entities, state, mechanisms, causal links, timing, uncertainty", "From the earlier runs' starting designs (runs 1-4)."],
+      ["ONT_LOOSE", "an ontology: things, hierarchy, relationships, rules", "From the earlier runs' starting designs (runs 1-4)."],
+      ["SEC_FLOW", "purpose, parts, flows, rules, timeline, unknowns", "From the earlier runs' starting designs (runs 1-4)."],
+      ["G1C3", "equations, with a fixed calculator", "From the earlier runs' starting designs (runs 1-4)."],
+      ["A5", "logic rules, with a fixed calculator", "From the earlier runs' starting designs (runs 1-4)."],
+      ["FACTS", "short facts: things, values, rules, links, timing", "From the earlier runs: the champion that runs 3 and 4 started from."],
+      ["STATES", "parts, states, events, transitions, timing", "From the earlier runs' starting designs (runs 1-4)."],
+      ["SPEC", "a specification: context, components, interfaces, requirements, constraints", "From the earlier runs' starting designs (runs 1-4)."],
+      ["A2", "a causal graph: variables, arrows, equations", "Added for run 5: an existing design never tested with Luna before."],
+      ["A3", "a simulation: Luna writes a program that plays the system forward", "Added for run 5: an existing design never tested with Luna before (it runs in a sealed sandbox)."],
+      ["G1C1", "a probability model: Luna writes code for the uncertain parts", "Added for run 5: an existing design never tested with Luna before (it runs in a sealed sandbox)."],
+      ["JSON", "one JSON object, keys from the design's own schema", "New for run 5, asked for by the human; written from first principles (not by wrapping FACTS)."],
+      ["MARKDOWN", "Markdown headings with tables and rule bullets", "New for run 5, asked for by the human; written from first principles."],
+      ["OWN", "Luna's own choice: no format suggested", "New for run 5, asked for by the human: do designed formats beat what Luna does on its own?"],
+      ["BLIND", "no notes: answers from the question alone", "A baseline, never chosen: shows how much can be guessed without reading anything."]];
+    $("s1origin").innerHTML = table(["Founder", "What it is", "Where it came from"], ORIGIN.map(function (o) { return [niceHtml(o[0]), esc(o[1]), esc(o[2])]; }));
+    var own = an && an.own_forms;
+    $("ownPanel").hidden = !own;
+    if (own) { var forms = ["json", "code", "tables", "headings", "bullets", "prose"]; $("own").innerHTML = table(["k"].concat(forms), Object.keys(own).map(function (k) { return [k].concat(forms.map(function (f) { return own[k][f] || 0; })); }), forms.map(function (_, i) { return i + 1; })); }
+  }
+
+  var PART = {A: "notes layout", B: "fact writing", C: "answering", D: "worked example", E: "thinking budget"};
+  function effName(n) { var p = n.split(":"); return p.length === 1 ? n + " " + PART[n] : p.join(" × ") + "  " + p.map(function (x) { return PART[x]; }).slice(0, -1).join(", ") + " with " + PART[p[p.length - 1]]; }
+  function renderStage2() {
+    var pl = D.plus, s2 = D.stage2;
+    $("stage2When").innerHTML = D.mode === "pilot" ? "<b>The format pilot has no stage 2</b>: it only tests founders. Switch to the mini run to see stage 2 filled in." :
+      s2 ? "" : "Stage 2 starts after stage 1 finishes and, in stage 2 prep, the human approves the five new parts.";
+    if (pl) {
+      var aTxt = pl.A && (pl.A.core_params ? JSON.stringify(pl.A.core_params) : pl.A.schema_fields ? JSON.stringify(pl.A.schema_fields) : pl.A.layout_text);
+      $("plusSub").innerHTML = "Written by Opus for the stage 1 winner (" + esc(nice(D.winner)) + "), frozen (hash " + esc(pl.hash) + ")" + (D.plus_approved ? ", <span class=\"status-good\">approved</span>." : ", <b>waiting for the human's approval</b>.");
+      $("plus").innerHTML = table(["Part", "New version (+)", "Why"], [
+        ["A notes layout", esc(aTxt), esc((pl.rationale || {}).A)], ["B fact writing", esc(pl.B && pl.B.guidance_text), esc((pl.rationale || {}).B)],
+        ["C answering", esc(pl.C && pl.C.answering_text), esc((pl.rationale || {}).C)], ["D worked example", (pl.D && pl.D.examples && pl.D.examples.length) ? "<pre style=\"white-space:pre-wrap;margin:0\">" + esc(pl.D.examples[0]) + "</pre>" : "none (removed)", esc((pl.rationale || {}).D)],
+        ["E thinking budget", "at most " + esc(pl.E && pl.E.max_turns) + " tool calls", "double the winner's budget (half, if double passes the maximum); plain-prose notes also get one revision pass"]]);
+    } else $("plus").innerHTML = '<p class="mute">Written in stage 2 prep, after stage 1.</p>';
+    $("s2brief").textContent = D.evidence_text || "Not written yet: Opus is given this brief after stage 1.";
+    var fit = s2 && s2.fit, an = (D.analysis || {}).stage2, src = an || fit, ret = (D.analysis || {}).stage2_retention;
+    var means0 = (an && an.design_means) || (fit && fit.design_means) || {};
+    if (src && src.effects) {
+      var FI = ["A", "B", "C", "D", "E"];
+      var prs = Object.keys(src.effects).filter(function (n) { return n.split(":").length === 2; });
+      $("s2pairs").innerHTML = table(["Interaction term", "Term", "95% range", "Design with just these two new parts", "Its score", "vs design 1"], prs.map(function (n) {
+        var e = src.effects[n], p = n.split(":"), idx = (1 << FI.indexOf(p[0])) + (1 << FI.indexOf(p[1])), lab = "D" + ("0" + (idx + 1)).slice(-2);
+        var m = means0[lab], d0 = means0.D01, d = m != null && d0 != null ? m - d0 : null;
+        return [esc(p[0] + " × " + p[1] + "  " + PART[p[0]] + " with " + PART[p[1]]) + (e.confirmatory ? " *" : ""), f3(e.effect), rng(e.range), esc(lab), f3(m),
+          d == null ? "-" : d > 0 ? '<span class="status-good">+' + f3(d) + '</span>' : '<span style="color:var(--warn)">' + f3(d) + '</span>'];
+      }), [1, 4, 5]);
+      var names = Object.keys(src.effects).filter(function (n) { return n.split(":").length !== 2; });
+      var rows = names.map(function (n) { var e = src.effects[n]; var rej = e.holm && e.holm.reject; return {label: effName(n) + (e.confirmatory ? " *" : ""), mean: e.effect, range: e.range, color: e.confirmatory ? "var(--g1)" : "var(--muted)", mark: e.confirmatory,
+        tip: "<b>" + esc(effName(n)) + "</b>" + (e.confirmatory ? " (pre-registered)" : " (exploratory)") + "<br>effect " + f3(e.effect) + " [" + f3(e.range[0]) + ", " + f3(e.range[1]) + "]<br>p " + e.p + (e.holm ? "; Holm " + (rej ? "<b>real</b>" : "not shown") : "")}; });
+      $("s2eff").innerHTML = showTable.s2eff ? table(["Effect", "Estimate", "95% range", "p", "Holm"], names.map(function (n) { var e = src.effects[n]; return [esc(effName(n)) + (e.confirmatory ? " *" : ""), f3(e.effect), "[" + f3(e.range[0]) + ", " + f3(e.range[1]) + "]", e.p, e.holm ? (e.holm.reject ? "real" : "not shown") : "exploratory"]; }), [1, 3]) :
+        forest(rows, {zero: true, aria: "effects of the five parts and notes layout × fact writing × answering", xTitle: "Effect on the score (right of 0 = helps, left = hurts). Line = 95% range", yTitle: "Part", valueTitle: "Effect"}) + '<p class="sub">* pre-registered (the five parts, A × B, A × C, B × C, A × B × C; pairs in the panel below). Tested across ' + (src.residual_df + 1) + " base systems." +
+        (ret ? " <b>Verdict (gated retention rule, V3-058): " + esc(ret.final_design) + (ret.final_design === "D01" ? ", the winner unchanged: no new part helped." : ".") + "</b> The old rule's fitted pick, " + esc(an.final_design) + ", was retired before any sealed score was seen." : an ? " Fitted pick " + esc(an.final_design) + "; the verdict follows (V3-058)." : " Live estimate; final after stage 2.") + '</p>';
+    } else { $("s2eff").innerHTML = '<p class="mute">' + (s2 ? "Fills in once every design has met at least one common item." : "Starts after stage 2 prep (the human's approval of the new parts).") + '</p>'; $("s2pairs").innerHTML = ""; }
+    if (s2) {
+      var means = (an && an.design_means) || (fit && fit.design_means) || {};
+      $("s2sub").textContent = "Design 1 is the stage 1 winner unchanged. Items done per design out of " + s2.planned + ".";
+      $("s2table").innerHTML = table(["Design", "A", "B", "C", "D", "E", "Items", "Mean"], Object.keys(s2.levels).map(function (k) { var l = s2.levels[k]; return [esc(k) + (k === D.final_design ? " ★" : ""), l.A, l.B, l.C, l.D, l.E, s2.done[k], f3(means[k])]; }), [6, 7]);
+    } else $("s2table").innerHTML = '<p class="mute">Starts after stage 1.</p>';
+  }
+
+  // ------------------------------------------------------------ stages 3 to N (V3-058)
+  var SLOTNAME = {"1": "layout", "2": "fact rules", "3": "build check", "4": "answering", "5": "worked example"};
+  var ARCH = {1: "strip back", 2: "explicit structure", 3: "self-check", 4: "one targeted fix"};
+  function short(v, n) { var s = typeof v === "string" ? v : JSON.stringify(v); return s.length > n ? s.slice(0, n) + "…" : s; }
+  function renderStages() {
+    var S = D.stages || {};
+    [3, 4, 5].forEach(function (n) {
+      var b = document.querySelector('#tabs button[data-tab="stage' + n + '"]'), x = S[String(n)];
+      if (b) { b.hidden = ((D.sizes || {}).stages || []).indexOf(n) < 0;   // every planned stage has its tab,
+               b.classList.toggle("later", !x); b.title = x ? "" : "not started yet"; }   // greyed until it starts
+      var el = $("stage" + n);
+      if (!el) return;
+      var br = (D.stage_briefs || {})[String(n)];
+      if (b && br) b.classList.remove("later");
+      if (!x && br) {
+        el.innerHTML = '<div class="panel"><h2>Stage ' + n + ': in progress</h2><p class="sub">' + (D.paused ? "<b>Paused.</b> " : "") + (D.waiting_for ? "<b>Waiting for:</b> " + esc(D.waiting_for) + " " : "") +
+          "Opus is writing four versions of each of the five parts of the current best (" + esc(D.current_best || "") + "), one session per part, since " + esc(hm(br.t)) + ". Code checks each part and sends back any that fail (up to 3 tries). When all 20 are written they appear here for a person to read and approve; no runs start before that.</p></div>" +
+          '<div class="panel"><h2>What Opus was given</h2><p class="sub">The firewalled evidence (generated items only): numbers about the current best and the earlier attempts with their measured effects. Never any question, item, answer key, hand-written result or score by problem family.</p><pre style="white-space:pre-wrap;margin:0;font-size:12px">' + esc(br.text) + '</pre></div>';
+        return;
+      }
+      if (!x) {
+        el.innerHTML = '<div class="panel"><h2>Stage ' + n + '</h2><p class="sub">Not started yet. ' + (n === 3 ? "It starts from FACTS, the stage 2 verdict, once the run is restarted: " : "It starts from the best design after stage " + (n - 1) + ", if the stages have not stopped: ") +
+          "Opus writes four versions of each of the five parts (layout, fact rules, build check, answering, worked example), a person approves them, then the screen (" + num((D.sizes || {}).screen_items) + " questions) and the confirmation (" + num((D.sizes || {}).confirm_items) + " questions) run. See How it works, 5b.</p></div>";
+        return;
+      }
+      var c = x.candidates || {}, sc = x.screen, cf = x.confirm, z = D.sizes || {}, ds = x.done_screen || {}, dc = x.done_confirm || {};
+      var labs = Object.keys(c).sort(), SL = ["1", "2", "3", "4", "5"];
+      var PARTDEF = {"1": ["How the notes are organised: their sections, and whether a fact may run over several lines.", "Four different organisations of the same content."],
+        "2": ["The rules for writing each fact down.", "Four different sets of writing rules."],
+        "3": ["How Luna checks its notes before saving them (process only, never syntax). Empty in FACTS.", "Four different checks."],
+        "4": ["How Luna answers a question from its notes.", "Four different answering procedures."],
+        "5": ["An example of good notes, always written in the design's own layout and fact rules.", "Four different examples."]};
+      var nameOf = function (lab) { var k = c[lab] || {}; return SLOTNAME[k.slot] + ", " + ARCH[k.archetype]; };
+      var cell = function (v) { var t = typeof v === "string" ? v : JSON.stringify(v); return /\n/.test(t) && /^##|\n- /.test(t) ? '<pre style="white-space:pre-wrap;margin:0;font-size:12px">' + esc(t) + '</pre>' : esc(t).replace(/\n/g, "<br>"); };
+      // 1. the five parts (as stage 2's "The five parts")
+      var h = '<div class="panel"><h2>The five parts</h2><p class="sub">Stage ' + n + ' takes the current best (' + esc(D.current_best || "") + ') apart into five parts. Each part gets four new versions written by Opus, one per approach (1 strip back, 2 explicit structure, 3 self-check, 4 one targeted fix), from a short firewalled summary of what is known (never the questions, the hand-written items or the scores by problem family). Each version is first tried alone against the current best (the screen); the best version of each part that clearly helps goes on, and every mix of those is tested (the confirmation).</p>' +
+        table(["Part", "What it is", "The new versions"], SL.map(function (s) { return ["<b>" + s + "</b> " + esc(SLOTNAME[s]), esc(PARTDEF[s][0]), esc(PARTDEF[s][1])]; })) + '</div>';
+      // 2. the new versions in full (as "Stage 2 prep: the five new parts")
+      h += '<div class="panel"><h2>Stage ' + n + ' prep: the 20 new versions</h2><p class="sub">Written by Opus for the current best (' + esc(D.current_best || "") + '), frozen (hash ' + esc(x.hash) + ')' + (x.approved ? ', <span class="status-good">approved</span>.' : ', <b>waiting for the human\'s approval</b>.') + ' Length in characters is shown so that a gain from simply writing more can be seen.</p><div class="scroll">' +
+        '<table style="table-layout:fixed"><colgroup><col style="width:13%"><col style="width:52%"><col style="width:29%"><col style="width:6%"></colgroup><tr><th>Approach</th><th>New version</th><th>Why</th><th class="n">Length</th></tr>' +
+        SL.map(function (s) {
+          var mine = labs.filter(function (lab) { return String(c[lab].slot) === s; });
+          return '<tr><td colspan="4" style="padding-top:12px"><b>' + s + " " + esc(SLOTNAME[s]) + '</b></td></tr>' + mine.map(function (lab) {
+            var k = c[lab], v = k.value;
+            var shown = v && typeof v === "object" ? "Sections: " + esc((v.headers || []).join(", ")) + "<br>" + (v.granularity === "fine" ? "One fact per one-line bullet" : "A fact may run over several lines") + (v.tags ? "; every bullet tagged with its source" : "") :
+              s === "5" ? '<pre style="white-space:pre-wrap;margin:0;font-size:12px">' + esc(v) + '</pre>' : esc(v).replace(/\n/g, "<br>");   // code font for examples only
+            return '<tr><td>' + esc(k.archetype + " " + ARCH[k.archetype]) + '</td><td style="overflow-wrap:anywhere">' + shown + '</td><td>' + esc(k.rationale) + '</td><td class="n">' + num(k.length) + '</td></tr>';
+          }).join("");
+        }).join("") + '</table></div></div>';
+      // 3. "What each part does" (as stage 2): the screen, then the confirmation
+      var key = "scr" + n, ms = x.mean_screen || {};
+      var rowsS = labs.filter(function (lab) { return sc && sc.candidates && sc.candidates[lab] && sc.candidates[lab].estimate != null; }).map(function (lab) {
+        var r = sc.candidates[lab], adv = sc.advancing && sc.advancing[String(c[lab].slot)] === lab;
+        return {label: nameOf(lab) + (adv ? " ✓" : ""), mean: r.estimate, range: r.range, color: adv ? "var(--good)" : "var(--g1)", mark: adv,
+          tip: "<b>" + esc(nameOf(lab)) + "</b><br>lead " + f3(r.estimate) + " " + rng(r.range) + "<br>lead at k = 8: " + f3((r.by_k || {})["8"]) + "<br>" + num(c[lab].length) + " characters; " + num(r.n_items) + " questions"};
+      });
+      var trows = labs.map(function (lab) {
+        var k = c[lab], r = sc && sc.candidates && sc.candidates[lab], slot = sc && sc.slots && sc.slots[String(k.slot)], adv = sc && sc.advancing && sc.advancing[String(k.slot)] === lab;
+        return [esc(nameOf(lab)), r ? f3(r.estimate) : "-", r ? rng(r.range) : "-", r && r.by_k ? f3(r.by_k["8"]) : "-",
+          adv ? '<span class="status-good">goes on</span>' : slot && slot.best === lab && slot.passes_gate ? "passed; capped (4 parts at most)" : slot && slot.best === lab ? "best of its part; under +" + f3(sc.gate) : "-"];
+      });
+      var lv = x.levels || {}, slots = Object.keys(lv.D01 || {}).sort();
+      var eff = (cf && cf.effects) || {}, mains = Object.keys(eff).filter(function (k) { return k.indexOf(":") < 0; }), prs = Object.keys(eff).filter(function (k) { return k.split(":").length === 2; });
+      var nm = function (k) { return k.replace(/slot(\d)/g, function (_, s) { return SLOTNAME[s]; }).replace(/:/g, " × "); };
+      var means = (cf && cf.design_means) || {}, key2 = "conf" + n;
+      h += '<div class="panel"><button class="toggle" data-table="' + key + '">' + (showTable[key] ? "chart" : "table") + '</button><h2>What each part does</h2>' +
+        '<h3>Screen: each new version on its own</h3><p class="sub">Lead = score of the current best with just this version swapped in, minus the current best, on the same ' + num(z.screen_items) + ' fresh questions. Dots right of zero help. A part\'s best version goes on (✓) only if it leads by at least +' + f3((sc && sc.gate) || 0.015) + ' (dashed line); at most 4 parts go on.' +
+        (x.screen_live ? " <b>Live estimate from the questions every design has done so far; final when the screen ends.</b>" : "") + '</p>' +
+        (!sc ? '<p class="mute">Fills in once every design has answered questions from at least two base systems.</p>' : showTable[key] ?
+          '<div class="scroll">' + table(["Version", "Lead", "95% range", "Lead at k = 8", "Result"], trows, [1, 3]) + '</div>' :
+          forest(rowsS, {zero: true, ref: {value: sc.gate || 0.015, label: "pass"}, aria: "screen leads of the 20 versions", xTitle: "Lead over the current best (right of 0 = helps, left = hurts). Line = 95% range", yTitle: "New version", valueTitle: "Lead"})) +
+        '<h3>Confirmation: every mix of the parts that went on</h3>' +
+        (mains.length ? '<p class="sub">Effect = mean of the designs with the new version minus the mean of those without, on ' + num(z.confirm_items) + ' more fresh questions. Tested across base systems, Holm-corrected over every part and pair.' +
+          (x.confirm_live ? " <b>Live estimate; final after the confirmation.</b>" : cf.replaces ? " <b>Verdict (gated retention rule): " + esc(cf.final_design) + " beats the current best by " + f3(cf.gain) + " head to head and becomes the new best.</b>" : " <b>Verdict (gated retention rule): no mix beat the current best head to head, so it stays.</b>") + '</p>' +
+          forest(mains.map(function (k) { var e = eff[k], rej = e.holm && e.holm.reject; return {label: nm(k), mean: e.effect, range: e.range, color: "var(--g1)", mark: rej,
+            tip: "<b>" + esc(nm(k)) + "</b><br>effect " + f3(e.effect) + " " + rng(e.range) + "<br>p " + e.p + "; Holm " + (rej ? "<b>real</b>" : "not shown")}; }), {zero: true, aria: "effects of the parts that went on", xTitle: "Effect on the score (right of 0 = helps, left = hurts). Line = 95% range", yTitle: "Part", valueTitle: "Effect"}) :
+          '<p class="mute">' + (sc && !x.screen_live && !Object.keys(sc.advancing || {}).length ? "No part passed the screen, so there is no confirmation: the stages stop and the final check follows." : "Runs after the screen: every mix of the parts that went on, on " + num(z.confirm_items) + " more fresh questions.") + '</p>') + '</div>';
+      // 4. "Interaction terms (synergy / antagonism)" (as stage 2)
+      var pairDesign = function (k) { var want = k.match(/slot(\d)/g).map(function (s) { return s.slice(4); }); return Object.keys(lv).filter(function (d) { var on = Object.keys(lv[d]).filter(function (s) { return lv[d][s] !== "0"; }); return on.length === 2 && want.every(function (w) { return on.indexOf(w) >= 0; }); })[0]; };
+      h += '<div class="panel"><h2>Interaction terms (synergy / antagonism)</h2><p class="sub">How much two parts\' effects depend on each other. A positive term can mean two harmful parts hurt less together, not that the pair helps: so each row also shows the design with just those two new parts, its score and its difference from design 1 (the current best unchanged).</p>' +
+        (prs.length ? table(["Interaction term", "Term", "95% range", "Design with just these two new parts", "Its score", "vs design 1"], prs.map(function (k) { var e = eff[k], d = pairDesign(k), m = d && means[d], d0 = means.D01, df = m != null && d0 != null ? m - d0 : null;
+            return [esc(nm(k)), f3(e.effect), rng(e.range), esc(d || "-"), f3(m), df == null ? "-" : df > 0 ? '<span class="status-good">+' + f3(df) + '</span>' : '<span style="color:var(--warn)">' + f3(df) + '</span>']; }), [1, 4, 5]) :
+          '<p class="mute">' + (mains.length === 1 ? "Only one part went on, so there are no pairs." : "Measured in the confirmation, when two or more parts go on (the screen tries each version alone, so it has no pairs).") + '</p>') + '</div>';
+      // 5. "The designs" (as stage 2's "The 32 designs"): the 21 screen designs, then the confirmation designs
+      h += '<div class="panel"><h2>The ' + (1 + labs.length) + (slots.length ? " + " + Object.keys(lv).length : "") + ' designs</h2>' +
+        '<h3>Screen: ' + (1 + labs.length) + ' designs</h3><p class="sub">Design 0 is the current best unchanged; every other design changes exactly one part to one new version. Items done per design out of ' + num(z.screen_items) + '; mean so far.</p><div class="scroll">' +
+        table(["Design", "Layout", "Fact rules", "Build check", "Answering", "Worked example", "Items", "Mean"],
+          [["0 (current best)", "-", "-", "-", "-", "-", num(ds.CUR), f3(ms.CUR)]].concat(labs.map(function (lab) { var k = c[lab];
+            return [esc(lab)].concat(SL.map(function (s) { return String(k.slot) === s ? "+ " + esc(k.archetype + " " + ARCH[k.archetype]) : "-"; })).concat([num(ds[lab]), f3(ms[lab])]); })), [6, 7]) + '</div>' +
+        (slots.length ? '<h3>Confirmation: ' + Object.keys(lv).length + ' designs</h3><p class="sub">Design 1 is the current best unchanged, run fresh. "+" = the new version that went on, "-" = the current best\'s own. Items done per design out of ' + num(z.confirm_items) + '.</p><div class="scroll">' +
+          table(["Design"].concat(slots.map(function (s) { return SLOTNAME[s] + " (" + lv[Object.keys(lv)[Object.keys(lv).length - 1]][s] + ")"; })).concat(["Items", "Mean"]),
+            Object.keys(lv).map(function (d) { return [esc(d) + (cf && d === cf.final_design && cf.replaces ? " ★" : "")].concat(slots.map(function (s) { return lv[d][s] === "0" ? "-" : "+"; })).concat([num(dc[d]), f3(means[d])]); }),
+            [slots.length + 1, slots.length + 2]) + '</div>' : '<h3>Confirmation</h3><p class="mute">Listed here once the screen has decided which parts go on.</p>') + '</div>';
+      // 7. what Opus was given
+      if (br) h += '<div class="panel"><details data-key="br' + n + '"><summary style="cursor:pointer"><b>What Opus was given</b> <span class="mute">(the firewalled evidence: generated items only; never any question, item, answer key, hand-written result or score by problem family)</span></summary><pre style="white-space:pre-wrap;margin:6px 0 0;font-size:12px">' + esc(br.text) + '</pre></details></div>';
+      var open = {};
+      el.querySelectorAll("details[open]").forEach(function (d) { open[d.getAttribute("data-key")] = 1; });   // the page rebuilds every second:
+      el.innerHTML = h;                                                                                       // keep what the reader opened
+      el.querySelectorAll("details[data-key]").forEach(function (d) { if (open[d.getAttribute("data-key")]) d.open = true; });
+    });
+  }
+
+  var SEQ = {"1_vs_plain_prose": "1. Final design vs plain prose (A0P)", "2_vs_hand_top": "2. Final design vs the hand-written top founder",
+    "3_vs_runner_up": "3. Final design vs the stage 1 runner-up", "4_vs_facts": "4. Final design vs FACTS: did the stages improve it?"};
+  function retiredNote() {
+    var r = (D.tiles || {}).retired;
+    return r && r.records ? '<p class="sub">The first sealed set was opened on 30 October 2026 for a final check that was stopped at 12:25 (V3-058: the rule that picked the final design was replaced). Its ' + num(r.records) + ' runs are kept unchanged and unviewed, fingerprinted (manifest ' + esc(String(r.manifest).slice(0, 12)) + '…), and are never analysed. A fresh sealed set is used instead.</p>' : "";
+  }
+  function renderFinal() {
+    var f = (D.analysis || {}).final2, z = D.sizes || {};
+    if (!f) { $("final").innerHTML = '<p class="sub">After the last stage, ' + (z.sealed2 ? num(z.sealed2) + " fresh" : "fresh") + ' sealed questions are opened once. The final design, FACTS, plain prose (A0P), the hand-written top founder and the stage 1 runner-up each answer all of them' + (z.hand ? ', and the final design also answers the ' + z.hand + ' hand-written items' : '') +
+      '. Four tests in a fixed order, the largest expected difference first; a test only counts if every test before it passed.</p>' + retiredNote(); return; }
+    var rows = Object.keys(f.sequence || {}).map(function (k) { var x = f.sequence[k]; return [esc(SEQ[k] || k), f3(x.estimate), rng(x.range), num(x.n_items), x.counted ? '<span class="status-good">✓ better (counted)</span>' : x.passes ? "better, but not counted (an earlier test failed)" : "not shown better"]; });
+    var hd = (f.hand || {}).vs_facts;
+    $("final").innerHTML = (f.same_as_facts ? '<p class="sub">The final design is FACTS itself: no stage found a change that beat it.</p>' : '') +
+      '<h3>Fresh sealed questions, in the fixed order</h3>' + table(["Comparison", "Lead", "95% range", "Questions", "Verdict"], rows, [1, 3]) +
+      (f.facts_vs_plain_prose ? '<p class="sub">Also reported: FACTS vs plain prose ' + f3(f.facts_vs_plain_prose.estimate) + " " + rng(f.facts_vs_plain_prose.range) + '.</p>' : "") +
+      (hd ? '<h3>Hand-written items</h3><p class="sub">Final design vs FACTS: ' + f3(hd.estimate) + " " + rng(hd.range) + ", " + num(hd.n_items) + ' items (paired test across the items).</p>' : "") + retiredNote();
+  }
+
+  // ------------------------------------------------------------ trust report: the walkthrough's four questions, from data already in the feed
+  function rng(r) { return r ? "[" + f3(r[0]) + ", " + f3(r[1]) + "]" : "-"; }
+  function renderTrust() {
+    var an = D.analysis || {}, s1 = an.stage1, s2 = an.stage2, fin = an.final2, w = D.winner, s2live = D.stage2 && D.stage2.fit;
+    if (!s1 || !w) { ["trustRight", "trustReliable", "trustWhy", "trustChange"].forEach(function (id) { $(id).innerHTML = '<p class="mute">Fills in after stage 1.</p>'; }); $("trustSub").textContent = ""; $("trustGlance").innerHTML = ""; return; }
+    trustGlance(s1, fin, w);
+    var who = D.current_best && D.current_best !== "stage 2 D01" ? "the current best design (" + esc(D.current_best) + ")" : "the stage 1 winner, " + esc(nice(w));
+    $("trustSub").innerHTML = "The system under test is " + who + ". Each section fills in as the run goes: stage 1 numbers, then the effects of every part tried in stages 2 to 5, then the sealed check at the end." +
+      (fin ? "" : " <b>Until the final check, the scores come from the items the designs were chosen on, so they are slightly optimistic.</b>");
+    // 1. how often right
+    var g = (s1.generated.designs || {})[w], h = s1.hand && (s1.hand.designs || {})[w], c = (s1.generated.designs || {}).A0P;
+    var r1 = [["Generated systems (stage 1)", f3(g && g.mean), rng(g && g.range), c ? f3(c.mean) : "-"],
+              ["Realistic messy documents (stage 1)", f3(h && h.mean), rng(h && h.range), s1.hand && s1.hand.designs.A0P ? f3(s1.hand.designs.A0P.mean) : "-"]];
+    var finHtml = "";
+    if (fin) {
+      var sm = (fin.sealed_means || {}).FINAL;
+      finHtml = '<h3>Sealed check: questions no AI had seen</h3>' + (sm ? '<p class="sub">Final design on the fresh sealed questions: <b>' + f3(sm.mean) + '</b> ' + rng(sm.range) + '.</p>' : "") +
+        table(["Comparison", "Lead", "95% range", "Verdict"], Object.keys(fin.sequence || {}).map(function (k) { var x = fin.sequence[k]; return [esc(SEQ[k] || k), f3(x.estimate), rng(x.range), x.counted ? '<span class="status-good">✓ better</span>' : "not shown better"]; }), [1]);
+    } else finHtml = '<p class="sub">The sealed check (' + ((D.sizes || {}).sealed2 ? num(D.sizes.sealed2) + " fresh" : "fresh") + ' unseen questions) gives the unbiased score after the last stage.</p>';
+    $("trustRight").innerHTML = table(["Where", "Score", "95% range", "Plain notes (control)"], r1, [1, 3]) + finHtml;
+    // 2. reliability
+    var byk = s1.by_k || {}, ks = Object.keys(byk), cond = (s1.conditional || {})[w] || {};
+    var kRows = ks.map(function (k) { var x = (byk[k] || {})[w]; return ["k = " + k + (k === "1" ? " (one system)" : " systems mixed"), f3(x && x.mean), rng(x && x.range)]; });
+    var ev = D.evidence, fk = ev && ev.builds && ev.builds.failed_by_k;
+    if (fk) kRows.forEach(function (r, i) { r.push(fk[ks[i]] || "-"); });
+    $("trustReliable").innerHTML = table(["System size", "Score", "95% range"].concat(fk ? ["Notes failed the check"] : []), kRows, [1]) +
+      '<p class="sub">Notes passed their own check in <b>' + (cond.built != null ? cond.built + " of " + cond.n : "-") + "</b> runs" + (cond.conditional != null ? "; score when they passed " + f3(cond.conditional) + ", over all runs " + f3(cond.unconditional) : "") +
+      ". Item-to-item spread (sd of score after design and item effects): " + f3(s1.sigma) + ".</p>";
+    // 3. why it fails
+    var probs = ev && ev.builds && ev.builds.failed_builds_by_problem;
+    $("trustWhy").innerHTML = probs ? table(["Checker problem", "Broken builds with it"], Object.keys(probs).map(function (p) { return [esc(p.replace(" N ", " 300 ")), probs[p]]; }), [1]) +
+      '<p class="sub">' + ev.builds.failed_check + " of " + ev.builds.checked + " builds (" + (100 * ev.builds.failed_share).toFixed(1) + "%) ended with notes that failed the check (by system size: section 2). The score falls from " +
+      f3(((byk[ks[0]] || {})[w] || {}).mean) + " at k = " + ks[0] + " to " + f3(((byk[ks[ks.length - 1]] || {})[w] || {}).mean) + " at k = " + ks[ks.length - 1] + ".</p>" : '<p class="mute">Not recorded for this run.</p>';
+    // 4. what to change
+    var src = s2 || s2live;
+    if (src && src.effects) {
+      var mains = ["A", "B", "C", "D", "E"].filter(function (k) { return src.effects[k]; });
+      $("trustChange").innerHTML = table(["Part", "Effect", "95% range", "Verdict"], mains.map(function (k) { var e = src.effects[k]; var v = e.range[0] > 0 ? '<span class="status-good">helps</span>' : e.range[1] < 0 ? "hurts" : "not clear yet"; return [esc(k + " " + PART[k]), f3(e.effect), rng(e.range), v]; }), [1]) +
+        '<p class="sub">' + (an.stage2_retention ? "<b>Stage 2 verdict: " + esc(an.stage2_retention.final_design) + "</b>: a part is kept only if its own effect is clearly positive and the new design then beats the old one head to head (V3-058)." : s2 ? "Fitted pick " + esc(s2.final_design) + "; the verdict follows (V3-058)." : "Live estimate from stage 2 so far; the ranges narrow as items arrive, and the official verdict uses the pre-registered tests (Stage 2 tab).") + '</p>' +
+        stageVerdicts();
+    } else $("trustChange").innerHTML = '<p class="mute">Fills in during stage 2.</p>';
+    // 5. changes made, before and after
+    var ba = D.before_after, pl = D.plus || {};
+    if (!ba || !ba.stage2 || !ba.stage2.before) { $("trustBASub").textContent = ""; $("trustBA").innerHTML = '<p class="mute">Fills in during stage 2.</p>'; return; }
+    $("trustBASub").innerHTML = "Before = " + esc(nice(w)) + " as it was. After = " + (ba.final ? "<b>the final design (" + esc(ba.target) + ")</b>" :
+      "<b>the design the live stage 2 fit predicts is best so far (" + esc(ba.target) + "), provisional until stage 2 ends</b>") + ". Both answer the same questions.";
+    var PTXT = {A: function () { return pl.A && pl.A.core_params ? "sections " + (pl.A.core_params.headers || []).join(", ") : "new layout"; },
+      B: function () { return pl.B ? String(pl.B.guidance_text).slice(0, 160) + "…" : "new rules"; }, C: function () { return pl.C ? String(pl.C.answering_text).split("\n")[0].slice(0, 120) + " … (" + String(pl.C.answering_text).split("\n").length + " steps)" : "new procedure"; },
+      D: function () { return "adds a short worked example"; }, E: function () { return "tool-call limit " + (pl.E ? pl.E.max_turns : "?") + " instead of 12"; }};
+    var lv = ba.levels || {};
+    var chg = ["A", "B", "C", "D", "E"].map(function (k) { var on = lv[k] > 0 || lv[k] === "+"; return [esc(k + " " + PART[k]), on ? '<span class="status-good">New version kept</span>' : "Tested, old version kept", esc(PTXT[k]())]; });
+    function delta(a, b, pctFmt) { if (a == null || b == null) return "-"; var d = b - a; var s = (d > 0 ? "+" : "") + (pctFmt ? (100 * d).toFixed(1) + " pts" : f3(d)); return d > 0 ? '<span class="status-good">' + s + '</span>' : d < 0 ? '<span style="color:var(--warn)">' + s + '</span>' : s; }
+    function baTable(x, title) {
+      var b = x.before, a = x.after; if (!b || !a) return "";
+      var rows = [["Accuracy (share right)", f3(b.mean), f3(a.mean), delta(b.mean, a.mean)]];
+      Object.keys(b.by_k || {}).forEach(function (k) { rows.push(["&nbsp;&nbsp;at k = " + k, f3(b.by_k[k]), f3((a.by_k || {})[k]), delta(b.by_k[k], (a.by_k || {})[k])]); });
+      rows.push(["Reliability: notes pass their check", b.built != null ? (100 * b.built).toFixed(1) + "%" : "-", a.built != null ? (100 * a.built).toFixed(1) + "%" : "-", delta(b.built, a.built, true)]);
+      rows.push(["Cost: output tokens per question", num(b.tokens), num(a.tokens), b.tokens && a.tokens ? ((a.tokens - b.tokens) > 0 ? "+" : "") + num(a.tokens - b.tokens) : "-"]);
+      return "<h3>" + title + " (" + num(b.n) + " questions each)</h3>" + (b.n < 200 ? '<p class="sub" style="color:var(--warn)">Few questions so far: differences this small are mostly chance, and the per-size rows (about ' + Math.round(b.n / 4) + ' questions each) even more so.</p>' : "") + table(["Measure", "Before", "After", "Change"], rows, [1, 2, 3]);
+    }
+    $("trustBA").innerHTML = (ba.target === "D01" ? '<p class="sub"><b>Stage 2: no change. Every new version was tested in 16 of the 32 designs, and none earned a place; the design stays the original itself.</b></p>' : "<h3>What was changed in stage 2</h3><p class=\"sub\">Every new version was tested in 16 of the 32 designs; only those that earned a place are kept.</p>" + table(["Part", "Result", "The new version that was tested"], chg) + baTable(ba.stage2, "Stage 2 questions")) +
+      (ba.stages || []).map(function (s) { return baTable(s, "Stage " + s.stage + ": " + s.design + " against the design before it, on that stage's confirmation questions"); }).join("") +
+      (ba.sealed ? baTable(ba.sealed, "Fresh sealed questions no AI had seen: FACTS against the final design (the honest before and after)") :
+      '<p class="sub">The sealed before-and-after appears after the final check. Earlier numbers use the questions the changes were chosen on, so they flatter the "after" a little.</p>');
+  }
+  // the three at-a-glance tiles at the top of the trust report (as the site walkthrough's report scene)
+  function trustGlance(s1, fin, w) {
+    var pc = function (x) { return x == null ? "-" : Math.round(100 * x) + "%"; };
+    var sm = fin && (fin.sealed_means || {}).FINAL, sp = fin && (fin.sealed_means || {}).A0P, g = (s1.generated.designs || {})[w], c = (s1.generated.designs || {}).A0P;
+    var right = sm || g, ctl = sm ? sp : c;
+    var t1 = '<div class="card"><h4>How often it is right</h4><div class="big">' + pc(right && right.mean) + '</div><p>' +
+      (sm ? "of fresh questions no AI had seen" : "of stage 1 questions <b>(provisional until the sealed check)</b>") +
+      (right && right.range ? " (range " + pc(right.range[0]) + "–" + pc(right.range[1]) + ")" : "") + '.</p>' +
+      (ctl ? '<p>Plain prose notes: ' + pc(ctl.mean) + '.</p>' : "") + sizeLine(s1, fin, w, pc) + '</div>';
+    var cond = (s1.conditional || {})[w] || {}, ev = D.evidence, b = ev && ev.builds, fk = (b && b.failed_by_k) || {}, ks = Object.keys(fk);
+    var okAt = function (k) { var m = String(fk[k] || "").match(/(\d+) of (\d+)/); return m ? 1 - m[1] / m[2] : null; };
+    var t2 = '<div class="card"><h4>Reliability</h4><div class="big">' + (cond.n ? pc(cond.built / cond.n) : "-") + '</div><p>of runs, its notes passed their own check (' + num(cond.built) + " of " + num(cond.n) + ').</p>' +
+      (ks.length ? '<p>' + pc(okAt(ks[0])) + " on 1 system, " + pc(okAt(ks[ks.length - 1])) + " on " + ks[ks.length - 1] + " mixed systems.</p>" : "") + '</div>';
+    var probs = (b && b.failed_builds_by_problem) || {}, pk = Object.keys(probs).sort(function (x, y) { return probs[y] - probs[x]; }), tot = pk.reduce(function (s, k) { return s + probs[k]; }, 0);
+    var COL = ["var(--g2)", "var(--warn)", "var(--muted)"], kTop = ks[ks.length - 1], m8 = String(fk[kTop] || "").match(/(\d+) of/);
+    var t3 = '<div class="card"><h4>Why it fails</h4>' + (tot ? '<div class="stack" role="img" aria-label="problems found in broken notes">' +
+      pk.map(function (k, i) { return '<i title="' + esc(k.replace(" N ", " 300 ")) + ": " + probs[k] + '" style="width:' + (100 * probs[k] / tot) + '%;background:' + COL[Math.min(i, 2)] + '"></i>'; }).join("") + '</div>' +
+      '<div class="leg">' + pk.map(function (k, i) { return '<i style="background:' + COL[Math.min(i, 2)] + '"></i><span>' + esc(k.replace(" N ", " 300 ")) + '</span><span>' + probs[k] + '</span>'; }).join("") + '</div>' +
+      '<p>Problems found in the ' + num(b.failed_check) + ' broken notes' + (m8 ? "; " + m8[1] + " of them on " + kTop + " mixed systems" : "") + '.</p>' +
+      (cond.conditional != null ? '<p>With good notes it is right ' + pc(cond.conditional) + ' of the time: most misses are wrong answers, not broken notes.</p>' : "") :
+      '<p class="mute">Not recorded for this run.</p>') + '</div>';
+    $("trustGlance").innerHTML = t1 + t2 + t3 + glanceVerdict(s1, fin, w, pc) + glanceEffort(s1, w) + glanceHeadroom(s1, fin, w);
+  }
+  // accuracy by system size, smallest against largest (the sealed items once the final check is in)
+  function sizeLine(s1, fin, w, pc) {
+    var bk = fin && fin.by_k ? fin.by_k : s1.by_k || {}, key = fin && fin.by_k ? "FINAL" : w, ks = Object.keys(bk);
+    if (ks.length < 2) return "";
+    var a = (bk[ks[0]] || {})[key], b = (bk[ks[ks.length - 1]] || {})[key];
+    return a && b ? '<p>' + pc(a.mean) + " right on 1 system, " + pc(b.mean) + " on " + ks[ks.length - 1] + " mixed systems.</p>" : "";
+  }
+  function pts(x) { return x == null ? "-" : (x > 0 ? "+" : "") + (100 * x).toFixed(1) + " pts"; }
+  // the verdict: the final design and the sealed comparisons, in order
+  function glanceVerdict(s1, fin, w, pc) {
+    var best = D.current_best && !/^stage 2 D01$/.test(D.current_best) ? esc(D.current_best) : esc(nice(w)) + " (unchanged)";
+    var SEQN = {"1_vs_plain_prose": "plain prose", "2_vs_hand_top": "the best format on hand-written documents", "3_vs_runner_up": "the runner-up (" + esc(nice(D.runner_up)) + ")", "4_vs_facts": "the stage 1 winner"};
+    var seq = (fin && fin.sequence) || {};
+    var lines = Object.keys(seq).map(function (k) { var x = seq[k]; return "<p>vs " + (SEQN[k] || esc(k)) + ": " + pts(x.estimate) + (x.counted ? ' <span class="status-good">✓ proven</span>' : x.passes ? " (passed, not counted)" : " not proven") + "</p>"; });
+    return '<div class="card"><h4>Verdict</h4><div class="big" style="font-size:22px">' + best + '</div>' +
+      (fin ? lines.join("") : '<p><b>Provisional:</b> the sealed check after the last stage decides.</p>') + '</div>';
+  }
+  // how hard we looked: formats, new versions, stages and runs, and how many changes were kept
+  function glanceEffort(s1, w) {
+    var S = D.stages || {}, ns = Object.keys(S), founders = Object.keys((s1.generated || {}).designs || {}).length;
+    var nv = (D.plus ? 5 : 0) + ns.reduce(function (s, n) { return s + Object.keys(S[n].candidates || {}).length; }, 0);
+    var planned = ((D.sizes || {}).stages || []).length + 2, run = (D.stage2 || D.plus ? 2 : 1) + ns.filter(function (n) { return S[n].screen; }).length;
+    var lv = (D.before_after || {}).levels || {}, kept = ["A", "B", "C", "D", "E"].filter(function (k) { return lv[k] > 0 || lv[k] === "+"; }).length +
+      ns.filter(function (n) { return S[n].confirm && !S[n].confirm_live && S[n].confirm.replaces; }).length;
+    var stopped = D.stage === "done" && run < planned;
+    return '<div class="card"><h4>How hard we looked</h4><div class="big">' + num(founders + nv) + '</div><p>versions tested: ' + founders + " formats, then " + nv + " new versions of the winner's parts.</p>" +
+      "<p>" + run + " of " + planned + " stages run" + (stopped ? ", then stopped: nothing beat the current best" : "") + "; " + num((D.progress || {}).runs_done_total) + " runs" + ((D.tiles || {}).retired ? " (plus " + num(D.tiles.retired) + " in the retired sealed set)" : "") + ".</p>" +
+      "<p>Changes kept: <b>" + kept + "</b>.</p></div>";
+  }
+  // headroom: the closest rival format and the best new version, and whether either is proven
+  function glanceHeadroom(s1, fin, w) {
+    var ru = fin && (fin.sequence || {})["3_vs_runner_up"], lr = ((s1.generated || {}).leads_over_control || {}), g = (s1.generated || {}).designs || {};
+    var rival = ru ? "<p>Closest rival: " + esc(nice(D.runner_up)) + ", " + pts(Math.abs(ru.estimate)).replace("+", "") + " behind on sealed questions" + (ru.counted ? "" : ", not a proven gap") + ".</p>" :
+      D.runner_up && g[w] && g[D.runner_up] ? "<p>Closest rival: " + esc(nice(D.runner_up)) + ", " + pts(g[w].mean - g[D.runner_up].mean).replace("+", "") + " behind in stage 1.</p>" : "";
+    var bestV = null, S = D.stages || {}, eff2 = ((D.analysis || {}).stage2_retention || (D.analysis || {}).stage2 || {}).effects || {};
+    ["A", "B", "C", "D", "E"].forEach(function (k) { var e = eff2[k]; if (e && (!bestV || e.effect > bestV.v)) bestV = {v: e.effect, name: "new " + PART[k] + " (stage 2)", proven: e.holm && e.holm.reject && e.effect > 0}; });
+    Object.keys(S).forEach(function (n) { var cf = S[n].confirm, sc = S[n].screen, c = S[n].candidates || {};
+      if (cf && cf.effects && !S[n].confirm_live) Object.keys(cf.effects).filter(function (k) { return k.indexOf(":") < 0; }).forEach(function (k) { var e = cf.effects[k], lab = (sc.advancing || {})[k.replace("slot", "")];
+        if (!bestV || e.effect > bestV.v) bestV = {v: e.effect, name: (lab && c[lab] ? SLOTNAME[c[lab].slot] + ", " + ARCH[c[lab].archetype] : k) + " (stage " + n + ")", proven: e.holm && e.holm.reject && e.effect > 0}; }); });
+    var bv = bestV ? "<p>Best new version: " + esc(bestV.name) + ", " + pts(bestV.v) + (bestV.proven ? ' <span class="status-good">✓ proven</span>' : ", not proven") + ".</p>" : "";
+    var small = bestV && !bestV.proven && bestV.v < 0.03;
+    return '<div class="card"><h4>Headroom</h4><div class="big" style="font-size:22px">' + (fin || D.stage === "done" ? (small ? "Small, unproven" : bestV && bestV.proven ? "Gains found" : "See below") : "Still searching") + '</div>' + rival + bv +
+      (small ? "<p>No other change held a gain above 1 point. Another run is worth it only to test these two.</p>" : "") + '</div>';
+  }
+  function stageVerdicts() {
+    var S = D.stages || {}, ns = Object.keys(S);
+    if (!ns.length) return "";
+    return "<h3>Stages 3 to 5</h3>" + table(["Stage", "Parts that went on", "Confirmation"], ns.map(function (n) {
+      var sc = S[n].screen, cf = S[n].confirm, ad = sc && !S[n].screen_live ? Object.keys(sc.advancing || {}) : null;
+      return ["Stage " + esc(n), ad == null ? "screen running" : ad.length ? ad.map(function (s) { return esc(SLOTNAME[s] + " (" + ARCH[(S[n].candidates[sc.advancing[s]] || {}).archetype] + ")"); }).join(", ") : "none: the stages stop",
+        !cf || S[n].confirm_live ? (ad && ad.length ? "running" : "-") : cf.replaces ? '<span class="status-good">new best ' + esc(cf.final_design) + " (+" + f3(cf.gain) + ")</span>" : "the current best stays"];
+    }));
+  }
+
+  // ------------------------------------------------------------ how it works (RUN5_BUILD_PLAN part C)
+  function renderHow() {
+    var z = D.sizes || {}, s1 = (D.analysis || {}).stage1 || {};
+    var sigTxt = s1.sigma != null ? "measured in this run: " + f3(s1.sigma) : "not measured yet in this run; the format pilot gave 0.26";
+    var T = [
+      ["1. The question",
+       "When an AI reads a long, messy description of a system (a factory, a power grid, a hospital ward), it has to understand it well enough to answer questions later: what happens if, what caused this, what is missing. We give a small, cheap AI (GPT-6 Luna) different ways to write down what it read, and measure which way lets it answer best. A <b>design</b> is one of those ways, written as a recipe Luna follows.",
+       "A design is a genome: a core (prose, sections, ontology, equations, rules, causal graph, simulation, probability model, JSON, Markdown) with its parameters, writing rules, an answering procedure, an optional worked example and a turn budget. The score is Luna's end-to-end accuracy: the share of questions answered right from its own notes."],
+      ["2. One run, step by step",
+       "A run is one design meeting one item. Luna reads the description and writes notes the way the design says, <i>without seeing the questions</i>. Then the description is taken away and Luna answers the questions using only its notes. The answers are marked. So a design scores well only if the notes it makes really hold the system.",
+       "Two-phase episode (<code>v3/episode.py</code>): phase 1, Luna (Codex, allowlisted tools only) builds the representation with the core's tools and checker (JSON and Markdown must pass their format check). Phase 2, a fresh Luna session gets the representation and the questions, with the core's read tools. Generated items are marked by code; hand-written items by the AI judge against the answer key. One record per run, kept for audit. A failure caused by the design (a forbidden tool call, running out of time) is retried twice and then scored 0; an infrastructure failure halts the run until it is fixed, so nothing is ever quietly dropped."],
+      ["3. The items",
+       "Two kinds of test. <b>Generated</b> items are invented systems made by a program, so the right answers are known exactly; they come in four sizes, from one system on its own to eight systems mixed together in one text, so we can see whether a design copes with complexity. <b>Hand-written</b> items are written by AI in the style of real operations documents (wiki pages, tickets, chat extracts, status tables, with aliases, gaps and contradictions) and ask one open question each; a separate AI marks the answers against an answer key. Every design sits the same items, like students sitting the same exam.",
+       "Main set: " + num(z.generated) + " generated items (" + num(Math.round((z.generated || 0) / 4)) + " base systems x k = 1, 2, 4, 8). Sealed final set: " + num(z.sealed) + " more, opened once. Hand-written: " + num(z.hand) + " items, written by Claude Sonnet with a hidden simulator that computes each answer key. Checks: an independent Sonnet answer graded by the judge; a no-document leak check by Sonnet (at most 0.25, and no top-weight key point guessed); a Sonnet adjudicator (keep, fix the key, or exclude); a human spot check. Chosen by quota per question type; graded by DeepSeek v4.1 Flash. Never used to choose a design."],
+      ["4. Stage 1: which way of writing things down works best",
+       "Fifteen founding designs, each a different way to describe reality: plain prose (the control), two kinds of sections, an ontology, equations, logic rules, a causal graph, a simulation and a probability model that Luna programs itself, three JSON layouts (short facts, a state machine, a build specification), a free JSON object, Markdown tables, and Luna's own choice with no format suggested. Every founder sits every item. A 'no notes' baseline also answers every question from the question alone, to show how much can be guessed without reading anything. We then ask which founders could be the best and which clearly are not, allowing for luck.",
+       num(z.founders) + " founders x (" + num(z.generated) + " + " + num(z.hand) + ") runs, paired item by item, so item difficulty cancels. Could-be-best set: Hsu's multiple comparisons with the best (bootstrap luck margin). Leads over the control: Holm. The highest mean on the generated items goes to stage 2 (ties: the hand-written mean, then name); the runner-up joins the final check, and so does the top founder on the hand-written items if it is neither. Stage 1 tests each way of writing notes together with its tools; a pre-registered contrast compares the notes-only founders with the tool-assisted ones. Also by system size and by family. The BLIND baseline is never chosen."],
+      ["5. Stage 2: what makes the winner better",
+       "We take the winning design apart into five parts: how its notes are laid out, the rules for writing each fact, how it answers, whether it shows an example, and how many tool calls it may use to write its notes. For each part, one alternative is written, guided by a short summary of how the winner did in stage 1 (for example, which notes broke the layout check, and how the score falls on larger systems). Then we build every mix of old and new parts, 2 x 2 x 2 x 2 x 2 = 32 designs, and test all 32 on the same items. Each new part is in exactly half the designs, balanced against every other part, so we can see what each part does on its own and which parts help or hurt each other.",
+       "A full 2^5 factorial. '-' = the winner as it is; '+' = an alternative written by Claude Opus from the winner's genome, the task, the factor's definition and (V3-056/057) a firewalled summary of the winner's stage 1 evidence on the generated items: score overall and by k, notes-check failures by checker category and by k, build tool calls by k, tokens, and how the build tools behave. Never the hand-written items, scores by problem family, items, question texts or answer keys. E (max_turns) is the build-phase tool-call limit, shown to Luna. In stage 2 prep the texts are fit-checked, frozen and approved by the human (sent back only for a written reason, at most twice). All 32 designs run fresh, including the winner itself, so its lucky stage 1 runs cannot tilt the comparison: 32 x " + num(z.stage2_items) + " runs."],
+      ["5b. Stages 3 to 5: improving the winner step by step",
+       "Stage 2 showed which parts of the winner matter. Each later stage builds on the best design so far. Opus writes four different versions of each of its five parts (how the notes are laid out, the rules for writing each fact, how Luna checks its notes before saving, how it answers, and the worked example it is shown), each following a different approach: strip back, add explicit structure, add a self-check, or make one targeted fix. Code checks that the versions really differ and touch only their own part, and a person approves them. First a quick <b>screen</b>: every version is tried on its own against the current best, on " + num(z.screen_items) + " fresh questions. The best version of a part goes on only if it leads by at least 0.015. Then a <b>confirmation</b>: every mix of the parts that went on, on " + num(z.confirm_items) + " more fresh questions. The current best changes only if a mix clearly beats it. The stages stop when nothing passes the screen, when the gain is tiny, or after stage 5.",
+       "One-at-a-time screen: 21 designs x " + num(z.screen_items) + " items (80 base systems; SE of a paired difference about 0.015). Gate: lead of +0.015 or more; at most 4 slots advance. Confirmation: a 2^m factorial (m <= 4) on 120 new base systems; Holm over the m mains and m(m-1)/2 pairs; the gated retention rule (6g). Opus sees the current best's genome, its evidence on the previous stage's confirmation items (score by k, checker failures, tool calls, tokens), and earlier candidates with their measured effects; never items, questions, answer keys, hand-written results, family scores or sealed records. Worked examples are always rewritten to match their design's layout and fact rules and must pass its notes checker. Every item set was chosen once, disjoint from everything used before, and locked before stage 3 (V3-058)."],
+      ["6a. Comparing two designs",
+       "For each item, take design A's mark minus design B's mark, then average. Easy and hard items affect both equally, so they cancel.",
+       "Paired difference; in the pilot the item-by-item difference between two designs varied with sd 0.36, so on 480 items the standard error is about 0.017 and a lead of about 0.049 is found 80% of the time. Ranges come from resampling whole base systems 10,000 times (cluster bootstrap)."],
+      ["6b. Which founders could be best",
+       "With fifteen founders, some gaps appear by luck alone. We work out the biggest gap luck could make among fifteen and only rule a founder out if it is further behind than that.",
+       "Hsu's multiple comparisons with the best, studentised and one-sided; the margin is the 95th percentile of the largest gap when whole base systems are resampled (cluster bootstrap)."],
+      ["6c. Holm's correction",
+       "Run many tests and some say 'yes' by chance. Holm's method raises the bar for each extra test so the chance of any false 'yes' stays at 5%.",
+       "Sort the p-values; the i-th smallest must be below 0.05 / (m - i + 1); stop at the first that fails."],
+      ["6d. Measuring each part",
+       "The effect of a part is the average of the 16 designs with the new version minus the average of the 16 without. Every other part is in both halves equally, so it cannot pass for this part's effect. Every run counts towards every part, so each part is measured about three times more sharply than two designs head to head.",
+       "For each item, the contrast mean(+) - mean(-) over the 32 designs; averaged within each base system; tested across the base systems (t test on bases - 1 degrees of freedom, cluster bootstrap range). At the pilot's noise, the smallest effect found 80% of the time is about 0.014."],
+      ["6e. Parts that work together",
+       "A new answering procedure may only help if the notes are laid out to suit it. With all 32 mixes we measure every pair of parts working together, as well as each part alone.",
+       "All ten pairs are estimated, plus notes layout x fact writing x answering. Pre-registered (Holm over nine): the five parts, A x B, A x C, B x C and A x B x C; the other pairs are exploratory."],
+      ["6f. How much is luck: sigma and tau",
+       "Sigma is how much a design's mark jumps from item to item (" + sigTxt + "). Tau is 'design surprise': how much a design scores above or below what its parts predict. More items shrink sigma's effect; only more designs shrink tau's.",
+       "The main tests use the spread across base systems. As a secondary check, the 16 three-, four- and five-part interactions of the 32 design means are treated as noise (16 degrees of freedom), with a half-normal (Lenth) check that none of them is actually a real effect."],
+      ["6g. Keeping a change only when it earns it (the gated retention rule)",
+       "The design that scores highest is usually also the luckiest, so its score flatters it: the winner's curse (a term from geneticists, who saw that the first study to find a gene always overstated its effect). Stage 2 first chose the mix the measured effects predicted was best; that rule picked a design that scored lower than the original, through two harmful parts that only looked good together. So the rule was replaced before any sealed score was seen (V3-058): start from the current best, keep a new part only if its own effect is clearly positive, keep a pair of parts working together only if both parts are kept, and change the design only if the new one then beats the old one head to head on the same questions.",
+       "Mains surviving Holm with a positive estimate are kept; a two-way interaction only if it survives Holm and both its mains are kept (marginality); a factor is never set to + solely through a negative interaction; d* = argmax of the kept terms; d* replaces D01 only if mean(d*) - mean(D01), averaged within base systems, has its 95% t range above 0 (df = bases - 1). Applied to stage 2: no part was significantly positive, so D01 = FACTS stays."],
+      ["6h. The final check",
+       "One honest re-test, after the last stage, on " + (z.sealed2 ? num(z.sealed2) + " fresh" : "fresh") + " items nobody has seen, and on the hand-written items. Four checks in a fixed order, the largest expected difference first, each counted only if every earlier one passed: the final design against plain prose, against the hand-written top founder, against the stage 1 runner-up, and last, if the stages changed anything, against FACTS itself. The first sealed set was opened for a final check that was stopped when the rule in 6g was replaced; its runs are kept, fingerprinted and never analysed.",
+       "Paired lead averaged within base systems, 95% t range above zero (180 base systems: SE about 0.010). On the hand-written items, the final design against FACTS is a paired test across the items (df = items - 1). Also reported: FACTS against plain prose, and every score by k."],
+      ["7. Safety and fairness",
+       "The rules are written down and locked before the run starts, so nobody can change the test after seeing results. The AIs that design anything never see the test questions or answers. Code Luna writes runs in a sealed box with no internet and no access to the computer. The final test items stay locked until the end.",
+       "Config, code, item ids and analysis are hash-locked (<code>v3.prereg</code>); any change is a recorded decision and a re-lock. Item writers never see designs; design writers never see items. Luna: allowlisted tools only. Model-written code: a throwaway Docker container (no network, read-only, 1 GB, 2 CPUs, non-root, removed after the call), audit hook inside. Allowance guards pause at 90% (Luna) and 85% (Claude)."],
+      ["8. Who decides what",
+       "Code runs the tests and does all the maths. AI writes the items, the alternative parts and the notes it is tested on, and marks the open answers. The human approves the design, the items, the alternative parts and the pilot, and says 'go'.",
+       "No AI makes a selection: winner, runner-up and final design are chosen by fixed rules in <code>v3/analysis5.py</code>. Human gates: the plan (V3-042), founder recipes, item spot check, pilot report, lock and 'go', the five new parts (stage 2 prep), each stage's 20 candidates and any worked examples written for its confirmation (mechanical checks only: safety and firewall, one part per candidate, length; no edits or choices by taste)."]];
+    $("howBody").innerHTML = T.map(function (t) { return '<div class="panel"><h2>' + t[0] + '</h2><div class="how"><div class="plain"><h4>In plain words</h4><p>' + t[1] + '</p></div><div class="tech"><h4>Technically</h4><p>' + t[2] + '</p></div></div></div>'; }).join("");
+    renderGloss();
+  }
+  var GLOSS = [
+    ["Design", "A recipe for how Luna writes its notes and answers from them."], ["Founder", "One of the 15 starting designs of stage 1."],
+    ["Control (A0P)", "Plain prose notes with no structure; the baseline every founder is compared with."], ["Core", "The kind of notes a design makes (prose, sections, JSON, equations, ...)."],
+    ["Item", "One test: a description plus questions."], ["k", "System size: how many separate systems are mixed in one generated text (1, 2, 4 or 8)."],
+    ["Generated item", "An invented system made by a program; answers known exactly; marked by code."], ["Hand-written item", "A realistic messy document with one open question, marked by an AI judge against an answer key."],
+    ["Judge", "DeepSeek v4.1 Flash, which marks open answers against the answer key."], ["Run", "One design meeting one item."],
+    ["Two-phase episode", "Luna writes notes without the questions, then answers from the notes alone."], ["Paired comparison", "Two designs compared item by item on the same items."],
+    ["95% range", "The span the true value lies in, allowing for luck, 95 times out of 100."], ["Bootstrap", "Resampling the items many times to see how much the result moves by luck."],
+    ["Could-be-best set", "Founders not clearly behind the best once luck among fifteen is allowed for (Hsu)."], ["Holm", "A correction that keeps the chance of any false 'yes' at 5% across several tests."],
+    ["Factor", "One of the five parts varied in stage 2 (A notes layout, B fact writing, C answering, D worked example, E thinking budget)."], ["Level (+/-)", "'-' is the winner's own version of a part; '+' is the new one."],
+    ["Stage 2 prep", "The step between the stages: Opus writes the five new parts for the winner; they are checked, frozen and approved by the human."],
+    ["Factorial", "Testing every combination of the parts' versions: 32 designs."], ["Main effect", "What one part does on its own: mean with '+' minus mean with '-'."],
+    ["Interaction (pair)", "How much two parts' effects depend on each other."], ["Sigma", "Item noise: how much a design's mark jumps from item to item."],
+    ["Tau (design surprise)", "How far a design scores from what its parts predict."], ["Fitted score", "The score the measured part effects predict for a design."],
+    ["Winner's curse", "The top scorer's score is usually inflated by luck (from genetics)."], ["Sealed set", "Items kept locked until the final check, then opened once."],
+    ["Final check", "One re-test on fresh sealed items after the last stage: the final design against plain prose, the hand-written top founder, the runner-up and FACTS, in that order."], ["Pre-registration", "Writing down all rules before the run; nothing changes after seeing results."],
+    ["Stage 3 to 5", "Improvement stages after stage 2: four versions of each part are screened one at a time, then the promising ones are confirmed in a factorial."],
+    ["Slot", "One of the five parts a stage can change: layout, fact rules, build check, answering, worked example."], ["Approach (archetype)", "The kind of change a candidate makes: strip back, explicit structure, self-check, or one targeted fix."],
+    ["Screen", "A quick test: each candidate alone against the current best; only clear leads (+0.015 or more) go on."], ["Confirmation", "Every mix of the parts that passed the screen, on fresh questions; decides the new current best."],
+    ["Gated retention rule", "Change the design only when a part's own effect is clearly positive and the new design beats the old one head to head (V3-058)."],
+    ["Interaction term", "Synergy or antagonism between two parts; a positive term can just mean two harmful parts hurt less together."],
+    ["Retired sealed set", "The first sealed set: opened for a final check that was stopped (V3-058); its runs are kept unchanged, fingerprinted and never analysed."],
+    ["Lock", "A hash of the rules, code and items; the run refuses to start if anything changed."], ["Allowlist", "The only tools Luna may call; any other call is a failure caused by the design (retried twice, then scored 0)."],
+    ["Docker sandbox", "A sealed throwaway container where code Luna writes runs, cut off from the internet and the computer."], ["Allowance guard", "Pauses the run near the weekly Luna or Claude limit and resumes after the reset."],
+    ["PAUSE", "A file that stops new runs; running ones finish."]];
+  function renderGloss() {
+    var q = ($("glossQ").value || "").toLowerCase();
+    $("gloss").innerHTML = table(["Term", "Meaning"], GLOSS.filter(function (g) { return !q || (g[0] + " " + g[1]).toLowerCase().indexOf(q) >= 0; }).map(function (g) { return ["<b>" + esc(g[0]) + "</b>", esc(g[1])]; }));
+  }
+  $("glossQ").oninput = renderGloss;
+
+  // refresh every second; the next request starts only after the last one has answered, so slow answers never pile up
+  (function tick() { load().then(function () { setTimeout(tick, 1000); }); })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+SYSTEM DESCRIPTION
+==================
+{context}
+
+QUESTION
+========
+{question}
+
+You have a `python` tool that runs Python 3 code in a fresh process and returns its stdout and stderr. The libraries clingo (answer set programming) and z3-solver (SMT solving) are installed, along with numpy. You may use the tool however you like — for example to write your own simulation, logic program, constraint model or calculation — or not at all. You can make up to {max_tool_calls} tool calls. When you are done, give your FINAL ANSWER.

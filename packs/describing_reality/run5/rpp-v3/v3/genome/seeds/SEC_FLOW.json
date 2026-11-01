@@ -1,0 +1,59 @@
+{
+ "genes": {
+  "core": {
+   "kind": "sectioned",
+   "params": {
+    "headers": [
+     "PURPOSE",
+     "PARTS",
+     "FLOWS",
+     "RULES",
+     "TIMELINE",
+     "UNKNOWNS"
+    ],
+    "tags": false,
+    "granularity": "coarse"
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "template_first",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [],
+  "guidance": {
+   "text": "Describe the system in plain language under the section headers, one element per bullet.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "SEC_FLOW",
+ "notes": "structured prose: purpose, parts, flows, rules, timeline, unknowns",
+ "id": "g71a939eeeb0",
+ "gene_hashes": {
+  "core": "01a421c0916a",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "12957c462d32",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "3281a75e498c",
+  "guidance": "b62e042255d4",
+  "numeric": "1737b3036f9b"
+ }
+}

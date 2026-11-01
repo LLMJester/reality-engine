@@ -1,0 +1,57 @@
+{
+ "genes": {
+  "core": {
+   "kind": "graph",
+   "params": {
+    "v2_arm": "A2"
+   }
+  },
+  "schema": {
+   "fields": [
+    "variables",
+    "assumptions",
+    "interventions"
+   ]
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "what_if",
+   "explain"
+  ],
+  "guidance": {
+   "text": "Write the system as a causal graph with signed edges, then trace interventions.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "A2",
+ "notes": "ported from v2 arm A2",
+ "id": "g12c9be0d72f",
+ "gene_hashes": {
+  "core": "cf4f0cc514fd",
+  "schema": "91b5a56e10cd",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "fbf334d6a716",
+  "guidance": "7a1462cf3c9e",
+  "numeric": "1737b3036f9b"
+ }
+}

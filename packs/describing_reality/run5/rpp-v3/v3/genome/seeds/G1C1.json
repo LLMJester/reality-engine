@@ -1,0 +1,58 @@
+{
+ "genes": {
+  "core": {
+   "kind": "probabilistic",
+   "params": {
+    "v2_arm": "G1C1"
+   }
+  },
+  "schema": {
+   "fields": [
+    "variables",
+    "parameters",
+    "assumptions",
+    "uncertainty"
+   ]
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "what_if",
+   "sensitivity"
+  ],
+  "guidance": {
+   "text": "Write a parameterised probabilistic program; a what-if is a re-run with overridden parameters.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "G1C1",
+ "notes": "ported from v2 arm G1C1",
+ "id": "gb16a94429ec",
+ "gene_hashes": {
+  "core": "f7f297a1b136",
+  "schema": "708b7560d574",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "0425d21aaf1d",
+  "guidance": "b7546c86d35e",
+  "numeric": "1737b3036f9b"
+ }
+}

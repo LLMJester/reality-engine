@@ -1,0 +1,77 @@
+{
+ "genes": {
+  "core": {
+   "kind": "ontology",
+   "params": {
+    "headers": [
+     "THINGS",
+     "HIERARCHY",
+     "RELATIONSHIPS",
+     "RULES",
+     "PROPERTIES"
+    ],
+    "relations": [
+     "causes",
+     "increases",
+     "decreases",
+     "drives",
+     "requires",
+     "prevents",
+     "precedes",
+     "contains",
+     "produces",
+     "consumes",
+     "depends on"
+    ],
+    "hierarchy": [
+     "is_a",
+     "part_of"
+    ],
+    "max_depth": 4
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "stepwise_checked",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "explain",
+   "what_if"
+  ],
+  "guidance": {
+   "text": "Describe the system as plain sentences in the ontology grammar, then query it.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "ONT_BASIC",
+ "notes": "plain-text ontology with lookup and path queries",
+ "id": "ge8df67f5f47",
+ "gene_hashes": {
+  "core": "83a741e1f605",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "47ab9039759e",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "081e94208000",
+  "guidance": "72276c57d687",
+  "numeric": "1737b3036f9b"
+ }
+}

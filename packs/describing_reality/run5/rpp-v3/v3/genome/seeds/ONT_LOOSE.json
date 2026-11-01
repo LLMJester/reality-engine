@@ -1,0 +1,78 @@
+{
+ "genes": {
+  "core": {
+   "kind": "ontology",
+   "params": {
+    "headers": [
+     "THINGS",
+     "HIERARCHY",
+     "RELATIONSHIPS",
+     "RULES",
+     "NOTES"
+    ],
+    "relations": [
+     "causes",
+     "increases",
+     "decreases",
+     "drives",
+     "requires",
+     "prevents",
+     "precedes",
+     "contains",
+     "produces",
+     "consumes",
+     "depends on"
+    ],
+    "hierarchy": [
+     "is_a",
+     "part_of"
+    ],
+    "max_depth": 4,
+    "strict": false
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "explain",
+   "what_if"
+  ],
+  "guidance": {
+   "text": "Describe the system in plain sentences; use the ontology forms for key facts and plain notes for the rest, then query it.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "ONT_LOOSE",
+ "notes": "loose plain-text ontology: grammar for key facts, free notes for the rest (V3-009)",
+ "id": "gd3ff35d9c64",
+ "gene_hashes": {
+  "core": "5d4e6aa528fb",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "081e94208000",
+  "guidance": "5cf4c46d6127",
+  "numeric": "1737b3036f9b"
+ }
+}

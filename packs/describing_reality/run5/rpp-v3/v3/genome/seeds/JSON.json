@@ -1,0 +1,69 @@
+{
+ "genes": {
+  "core": {
+   "kind": "json",
+   "params": {
+    "keys": [
+     "things",
+     "quantities",
+     "links",
+     "events",
+     "rules",
+     "unknowns"
+    ],
+    "max_depth": 4
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "explain",
+   "compare"
+  ],
+  "guidance": {
+   "text": "Write the system as one JSON object a program could read. things: one object per part or actor, with name, kind and what it does. quantities: one object per measured value, with thing, name, value, unit and when it holds. links: one object per connection or cause, with from, to, relation and condition. events: one object per thing that happens, with when, what and effect. rules: one string per rule, written 'if <condition> then <consequence>'. unknowns: one string per thing the description leaves open. Use the exact names, numbers and units from the description; never invent a value.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  },
+  "examples": {
+   "items": []
+  },
+  "answering": {
+   "text": ""
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "JSON",
+ "notes": "one checked JSON object: things, quantities, links, events, rules, unknowns (human, run 5)",
+ "id": "gb61459be54d",
+ "gene_hashes": {
+  "core": "0522e7a2c203",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "1d80332e3fb2",
+  "guidance": "835926542300",
+  "numeric": "1737b3036f9b",
+  "examples": "8d71a6d2e4f4",
+  "answering": "c39fdeba1d8d"
+ }
+}

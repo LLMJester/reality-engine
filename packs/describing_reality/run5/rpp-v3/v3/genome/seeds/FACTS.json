@@ -1,0 +1,58 @@
+{
+ "genes": {
+  "core": {
+   "kind": "sectioned",
+   "params": {
+    "headers": [
+     "THINGS",
+     "VALUES",
+     "RULES",
+     "LINKS",
+     "TIMING"
+    ],
+    "tags": false,
+    "granularity": "fine"
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [],
+  "guidance": {
+   "text": "Write every fact as one short bullet in key-value form: 'name: value' (for example 'T1.level: 40% at start') or 'a -> b: relation' (for example 'P1 -> T1: fills'). One fact per bullet, no prose, no repetition. Put each fact under the section it belongs to.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "FACTS",
+ "notes": "key-value fact lines, one fact per bullet (research: compact facts and key-value lists aid lookup)",
+ "id": "gd6f99b53eb9",
+ "gene_hashes": {
+  "core": "643b320bbe1a",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "3281a75e498c",
+  "guidance": "f48282426d1b",
+  "numeric": "1737b3036f9b"
+ }
+}

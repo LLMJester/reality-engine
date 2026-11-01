@@ -1,0 +1,59 @@
+{
+ "genes": {
+  "core": {
+   "kind": "sectioned",
+   "params": {
+    "headers": [
+     "ENTITIES",
+     "STATE",
+     "MECHANISMS",
+     "CAUSAL LINKS",
+     "TIMING",
+     "UNCERTAINTY"
+    ],
+    "tags": true,
+    "granularity": "coarse"
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "stepwise_checked",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [],
+  "guidance": {
+   "text": "Describe the system in plain language under the section headers, one element per bullet.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "SEC_A1",
+ "notes": "structured prose: v2 arm A1 sections and provenance tags",
+ "id": "g56e144cc15f",
+ "gene_hashes": {
+  "core": "6b7f81c49552",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "47ab9039759e",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "3281a75e498c",
+  "guidance": "b62e042255d4",
+  "numeric": "1737b3036f9b"
+ }
+}

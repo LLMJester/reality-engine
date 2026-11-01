@@ -3,8 +3,7 @@
 *Find out, by experiment, how far an AI system can be trusted, why it fails, and what makes it better.*
 
 Website: https://therealityengine.ca · White paper: https://llmjester.github.io/describing-reality-for-ai/ ·
-First case study's code and results: [therealityengine](https://github.com/LLMJester/therealityengine),
-[describing-reality-for-ai](https://github.com/LLMJester/describing-reality-for-ai)
+The first case study's results and rules: [describing-reality-for-ai](https://github.com/LLMJester/describing-reality-for-ai)
 
 This is the **generic engine**. Everything specific to a problem lives in a *problem pack*. The engine itself runs
 the same locked stages, the same statistics and the same honesty rules for every problem, and writes a trust report.
@@ -110,8 +109,9 @@ resume.
 `packs/describing_reality/` is run 5 of the Discovery Programme as a pack. A small model (GPT-6 Luna) reads a long,
 messy description of a system, writes notes in a prescribed format, and later answers questions from its notes
 alone. The pack is an **adapter**: the problem code itself (designs, the two-phase episode, the grader, the
-designer's prompts and checks) is the run 5 harness, which it imports from `RPP_V3_HOME`. A public copy of the harness, for
-reading, is in [describing-reality-for-ai/harness](https://github.com/LLMJester/describing-reality-for-ai).
+designer's prompts and checks) is the code that ran run 5, kept unchanged in
+[`packs/describing_reality/run5/`](packs/describing_reality/run5/). Read it to see exactly how the case study was
+built, or copy its shape for your own problem.
 
 Two parts are deliberately not public:
 - **The world generator** that makes the test systems and their answer keys. With it, anyone could rebuild the answer
@@ -155,11 +155,12 @@ wins, it beats plain prose on sealed cases, and nothing the designer tried impro
 a result: with 4 sealed systems, even a 21-point lead over SEC_FLOW can't be told apart from chance. Its trust
 report, analysis and the designer's frozen versions are in `work/pilot1/`.
 
-## Relation to the earlier repositories
+## Two repositories
 
-[therealityengine](https://github.com/LLMJester/therealityengine) holds the code exactly as it ran the first case
-study, tied to that problem. It stays frozen as the record of that study. This repository is where the engine
-becomes generic. New packs, new kinds of designer and improvements to the engine belong here.
+| Repository | What it is for |
+| --- | --- |
+| **reality-engine** (this one) | The engine, to run the method on your own problem. The first case study is its first pack, with its code |
+| **[describing-reality-for-ai](https://github.com/LLMJester/describing-reality-for-ai)** | The details of the first case study: the white paper, its results and the rules it was run under |
 
 ## Contributing
 

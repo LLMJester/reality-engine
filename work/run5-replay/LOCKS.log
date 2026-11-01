@@ -1,1 +1,2 @@
 {"t": "2026-10-31T17:47:18", "reason": "replay of run 5 from its records", "sha256": "209c4e4ab0d74432b663b14baed81bb944adbdc2c1084cac9dcf87b850856cbd"}
+{"t": "2026-10-31T20:18:17", "reason": "after the run: the pack folder gained run5/, the unchanged code that ran run 5, and pack.py now falls back to it when ../rpp-v3 is absent; no engine or pack logic changed (the fresh replay still matches 712/712)", "sha256": "90907ea3c4bb60a3adce9891ee250835c1c351cd2cf18d961389cf8f12ba97ee"}

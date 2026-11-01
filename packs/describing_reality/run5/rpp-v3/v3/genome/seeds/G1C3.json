@@ -1,0 +1,59 @@
+{
+ "genes": {
+  "core": {
+   "kind": "equations",
+   "params": {
+    "v2_arm": "G1C3"
+   }
+  },
+  "schema": {
+   "fields": [
+    "variables",
+    "units",
+    "parameters",
+    "assumptions"
+   ]
+  },
+  "build_protocol": {
+   "kind": "one_shot",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [
+   "what_if",
+   "explain",
+   "trajectory"
+  ],
+  "guidance": {
+   "text": "Write the whole system as named variables with explicit equations, then query the model.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "G1C3",
+ "notes": "ported from v2 arm G1C3",
+ "id": "gee51e8a8886",
+ "gene_hashes": {
+  "core": "c98f7169e23c",
+  "schema": "3c405b52a07e",
+  "build_protocol": "837f6c1a8551",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "eefccea03aa5",
+  "guidance": "62c3482e7f89",
+  "numeric": "1737b3036f9b"
+ }
+}

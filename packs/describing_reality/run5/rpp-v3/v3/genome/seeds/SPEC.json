@@ -1,0 +1,59 @@
+{
+ "genes": {
+  "core": {
+   "kind": "sectioned",
+   "params": {
+    "headers": [
+     "CONTEXT",
+     "COMPONENTS",
+     "INTERFACES",
+     "REQUIREMENTS",
+     "CONSTRAINTS",
+     "OPEN QUESTIONS"
+    ],
+    "tags": false,
+    "granularity": "coarse"
+   }
+  },
+  "schema": {
+   "fields": []
+  },
+  "build_protocol": {
+   "kind": "template_first",
+   "params": {}
+  },
+  "tool_interface": {
+   "errors": "first_only",
+   "submit": "tool_arg",
+   "patch": true
+  },
+  "query_layer": [],
+  "guidance": {
+   "text": "Write the system as a specification for someone who will build it. REQUIREMENTS: one bullet per behaviour in EARS form: 'WHEN <trigger> THE SYSTEM SHALL <response>', 'WHILE <state> THE SYSTEM SHALL <response>', 'IF <condition> THEN <part> SHALL <response>', with exact values and timings. COMPONENTS and INTERFACES: the parts and what passes between them, with quantities.",
+   "examples": []
+  },
+  "numeric": {
+   "max_turns": 12,
+   "retries": 2,
+   "check_every": 1,
+   "samples": 50,
+   "tolerance": 0.05
+  }
+ },
+ "parents": [],
+ "operator": "seed",
+ "generation": 0,
+ "island": 0,
+ "name": "SPEC",
+ "notes": "EARS-style build specification (research: spec-driven development for AI builders)",
+ "id": "gfec66daacee",
+ "gene_hashes": {
+  "core": "b4c04f0fac74",
+  "schema": "dad57f4b5e71",
+  "build_protocol": "12957c462d32",
+  "tool_interface": "fd25942aa40b",
+  "query_layer": "3281a75e498c",
+  "guidance": "53cb962e42d3",
+  "numeric": "1737b3036f9b"
+ }
+}

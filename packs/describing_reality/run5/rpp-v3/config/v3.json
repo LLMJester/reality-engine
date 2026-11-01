@@ -1,0 +1,202 @@
+{
+  "_note": "Discovery Programme v3 configuration (rpp-core/reports/NEXT_ROUND_SPEC.md). Launch decisions (spec \u00a715) are marked 'decide'.",
+  "run": 5,
+  "v2_root": "../rpp-core",
+  "models": {
+    "builder_claude": "sonnet",
+    "designer_claude": "opus",
+    "builder_openrouter": "qwen/qwen3-235b-a22b-2507",
+    "grader": "deepseek/deepseek-v4.1-flash",
+    "frontier_audit": "google/gemini-4-argon",
+    "builder_openrouter_providers": [
+      "Nebius",
+      "DeepInfra",
+      "Parasail"
+    ],
+    "builder_codex": "gpt-6-luna"
+  },
+  "budget": {
+    "openrouter_cash_usd": 25.0,
+    "reserve_usd": 4.0,
+    "final_reserve_usd": 6.0,
+    "claude_runs_per_hour": 360,
+    "max_parallel_agents": 12,
+    "claude_weekly_pause_percent": 85,
+    "claude_usage_check_every": 40,
+    "codex_runs_per_hour": 10000,
+    "catchup_codex_runs_per_hour": 1200,
+    "catchup_codex_parallel": 10,
+    "codex_weekly_pause_percent": 90,
+    "codex_usage_check_every": 40,
+    "codex_parallel_agents": 12
+  },
+  "evolution": {
+    "children_per_generation": 20,
+    "islands": 1,
+    "migrants": 0,
+    "migrate_every": 1000,
+    "quick_build_items": 5,
+    "quick_build_pass": 3,
+    "screen_items": 30,
+    "full_items_min": 120,
+    "full_top_k": 6,
+    "full_top_k_small": 0,
+    "finalist_repeats": 3,
+    "stop_no_improve_generations": 8,
+    "max_generations": 20,
+    "operator_floor": 0.03,
+    "operator_shares": {
+      "point": 0.15,
+      "repair": 0.125,
+      "guidance": 0.15,
+      "big_jump": 0.075,
+      "transplant": 0.24,
+      "swap": 0.06,
+      "simplify": 0.06,
+      "param": 0.06,
+      "numeric": 0.04,
+      "graft": 0.04
+    },
+    "effort_band": 0.3,
+    "dev_items": 10,
+    "episode_mode": "two_phase",
+    "small_builder": "codex",
+    "primary_builder": "codex",
+    "seeds": [
+      "A0P",
+      "SEC_A1",
+      "ONT_LOOSE",
+      "SEC_FLOW",
+      "G1C3",
+      "A5",
+      "FACTS",
+      "STATES",
+      "SPEC"
+    ],
+    "ladder": {
+      "quick": {
+        "1": 1,
+        "2": 1,
+        "4": 2,
+        "8": 1
+      },
+      "screen": {
+        "1": 6,
+        "2": 8,
+        "4": 8,
+        "8": 8
+      },
+      "full": {
+        "1": 27,
+        "2": 27,
+        "4": 28,
+        "8": 28
+      }
+    },
+    "micro": {
+      "enabled": false,
+      "bases": 3,
+      "bases_small": 0,
+      "tweaks_per_base": 6,
+      "ops": [
+        "param",
+        "simplify",
+        "numeric"
+      ],
+      "batch": 5,
+      "confirm_tries": 2
+    },
+    "mode": "directed4",
+    "directed": {
+      "_note": "run 4 (V3-037): directed breeding with honest screening; see v3/directed4.py and PREREG.md 'Run 4 rules'",
+      "mix": {
+        "fix": 0.3,
+        "combine": 0.35,
+        "big": 0.35
+      },
+      "ops": {
+        "fix": {
+          "point": 0.5,
+          "guidance": 0.3,
+          "repair": 0.2
+        },
+        "combine": {
+          "smart_combine": 0.6,
+          "transplant": 0.25,
+          "swap": 0.15
+        },
+        "big": {
+          "big_jump": 0.4,
+          "answer_method": 0.4,
+          "simplify": 0.05,
+          "param": 0.05,
+          "numeric": 0.05,
+          "graft": 0.05
+        }
+      },
+      "reserve": 0.2,
+      "parent_pool": 6,
+      "tries_per_child": 4,
+      "repair_below_build": 0.95,
+      "shelf_margin": 0.02,
+      "three_parent": 2,
+      "champion_children_from_round": 2,
+      "family_alarm": 0.7,
+      "parallel_children": 3,
+      "carryover": null,
+      "carryover_dropped": "docs/seeds_run4_carryover.json",
+      "main_start": 1300000,
+      "ext_start": 100000,
+      "practice_start": 300000,
+      "practice_bases": 4,
+      "proof_levels": [
+        "ext1",
+        "ext2",
+        "ext3"
+      ],
+      "proof_best_always": true,
+      "ext_bases": 30,
+      "confirm_bases": 30,
+      "confirm_start": 500000,
+      "confirm_per_round": 1,
+      "auto_final": true
+    }
+  },
+  "grading": {
+    "agreement_threshold": 0.85,
+    "frontier_audit_fraction": 0.05
+  },
+  "final": {
+    "_note": "run 4 built-in finals (V3-034, V3-037): A accuracy on run 4's fresh sealed sets (Luna), B interaction/build (Luna), C transfer (OpenRouter small models + Haiku); see v3/final3.py",
+    "repeats_luna": 3,
+    "interaction_bases": 20,
+    "interaction_start": 2800000,
+    "transfer_models": {
+      "or_qwen": "qwen/qwen3.8-flash",
+      "or_gemma": "google/gemma-4-26b-a4b-it",
+      "or_mistral": "mistralai/mistral-small-2603",
+      "or_gptoss": "openai/gpt-oss-20b",
+      "cl_haiku": "claude:haiku"
+    },
+    "_transfer_note": "V3-035: or_* run on OpenRouter, cl_* on the human's Claude subscription (Claude Code, headless); transfer_settings = each OpenRouter model's reasoning setting (null: none sent); a model with paired records on fewer than half the items is reported as unusable and left out of H9",
+    "transfer_settings": {
+      "qwen/qwen3.8-flash": {
+        "enabled": false
+      },
+      "google/gemma-4-26b-a4b-it": null,
+      "mistralai/mistral-small-2603": null,
+      "openai/gpt-oss-20b": {
+        "effort": "low"
+      }
+    },
+    "transfer_min_models": 2,
+    "transfer_parallel": 6,
+    "transfer_ready": true,
+    "sealed": {
+      "_note": "V3-037: fresh sealed sets for run 4; run 3's sealed sets (test 2.0M generated, 2.5M ladder, 2.7M interaction, v2 held-out) are retired",
+      "generated_start": 100000,
+      "ladder_start": 2600000,
+      "heldout": false
+    }
+  }
+}

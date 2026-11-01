@@ -6,9 +6,10 @@ alone. A candidate is a design (a "genome": note format, fact-writing rules, ans
 budget); an item is a generated system at size k = 1, 2, 4 or 8 (K<k>x<base>), or a hand-written document
 (H<n>-<q>); the score is the share of questions answered right, graded by script against the generator's key.
 
-This pack is an adapter: the problem code itself (the designs, the generator, the two-phase episode, the grader, the
-designer's prompts and checks) is the run 5 harness, which it imports from RPP_V3_HOME (default ../rpp-v3; the public
-copy is describing-reality-for-ai/harness). The generator that makes the systems and their answer keys is not public:
+This pack is an adapter: the problem code itself (the designs, the two-phase episode, the grader, the designer's
+prompts and checks) is the code that ran run 5, copied unchanged into run5/ (run5/MANIFEST.json has each file's hash).
+It is imported from RPP_V3_HOME if set, else from ../rpp-v3 if present (the working copy, with run 5's records and
+the generator), else from run5/rpp-v3. The generator that makes the systems and their answer keys is not public:
 with it, anyone could rebuild the answer keys of sealed test sets.
 
   ReplayPack  reads the scores run 5 saved, so the engine can rerun the whole of run 5's decisions with no model
@@ -24,7 +25,9 @@ import threading
 
 from engine.pack import Pack, Paused
 
-HOME = pathlib.Path(os.environ.get("RPP_V3_HOME") or pathlib.Path(__file__).resolve().parents[3] / "rpp-v3").resolve()
+_HERE = pathlib.Path(__file__).resolve().parent
+_WORKING = _HERE.parents[2] / "rpp-v3"
+HOME = pathlib.Path(os.environ.get("RPP_V3_HOME") or (_WORKING if _WORKING.is_dir() else _HERE / "run5" / "rpp-v3")).resolve()
 if str(HOME) not in sys.path:
     sys.path.insert(0, str(HOME))
 
