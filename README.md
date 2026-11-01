@@ -2,7 +2,7 @@
 
 *Find out, by experiment, how far an AI system can be trusted, why it fails, and what makes it better.*
 
-Website: https://therealityengine.ca · White paper: https://llmjester.github.io/describing-reality-for-ai/ ·
+Website: https://therealityengine.ca · White paper: https://therealityengine.ca/paper/ ·
 The first case study's results and rules: [describing-reality-for-ai](https://github.com/LLMJester/describing-reality-for-ai)
 
 This is the **generic engine**. Everything specific to a problem lives in a *problem pack*. The engine itself runs
@@ -152,7 +152,7 @@ item, and the texts the designer wrote then, so the engine re-makes every decisi
 
 | Step | Engine (replay) | Run 5 |
 |---|---|---|
-| Compare: winner, runner-up, top on hand-written | FACTS, A3 (tied), ONT_LOOSE | FACTS, A3 (tied), ONT_LOOSE |
+| Compare: winner, runner-up, top on the realistic documents | FACTS, A3 (tied), ONT_LOOSE | FACTS, A3 (tied), ONT_LOOSE |
 | Take apart: 32 designs, keep rule | D01 (FACTS kept; no part kept) | D01 |
 | Round 1 (stage 3): screen | layout and rules advance | slots 1 and 2 advance |
 | Round 1: confirmation | no mix beats FACTS; the rounds stop | the same |
